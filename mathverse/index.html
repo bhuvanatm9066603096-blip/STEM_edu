@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VISGEN · 3D Physics Lab</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #060b1f;
+            color: #e8ecff;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            min-height: 70px;
+            padding: 14px 24px;
+
+            display: flex;
+            align-items: center;
+            gap: 16px;
+
+            background: rgba(8, 15, 40, 0.95);
+            border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            margin: 0;
+            margin-right: auto;
+
+            font-size: 20px;
+            font-weight: 800;
+
+            background: linear-gradient(
+                90deg,
+                #22d3ee,
+                #a855f7
+            );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        label {
+            font-size: 13px;
+            color: #aeb8d8;
+
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        select {
+            background: #101936;
+            color: white;
+
+            border: 1px solid #29365e;
+            border-radius: 8px;
+
+            padding: 7px 10px;
+            outline: none;
+        }
+
+        button {
+            border: 1px solid #29365e;
+            background: #101936;
+            color: #e8ecff;
+
+            padding: 9px 14px;
+            border-radius: 9px;
+
+            cursor: pointer;
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+        button:hover {
+            border-color: #22d3ee;
+            transform: translateY(-1px);
+        }
+
+        #visgenHomeBtn {
+            border-color: rgba(34, 211, 238, 0.5);
+        }
+
+        .pill {
+            padding: 7px 11px;
+            border-radius: 999px;
+
+            background: #101936;
+            border: 1px solid #29365e;
+
+            font-size: 12px;
+            color: #b9c4e8;
+        }
+
+        #xb {
+            width: 110px;
+            height: 7px;
+
+            background: #111a35;
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+        #bar {
+            display: block;
+            height: 100%;
+            width: 0%;
+
+            background: linear-gradient(
+                90deg,
+                #22d3ee,
+                #a855f7
+            );
+
+            transition: width 0.3s;
+        }
+
+        /* ================= STEM SECTION ================= */
+
+        #subjects-section {
+            padding: 80px 7%;
+            min-height: calc(100vh - 70px);
+
+            background:
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(34, 211, 238, 0.08),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 85% 70%,
+                    rgba(168, 85, 247, 0.08),
+                    transparent 30%
+                );
+        }
+
+        .section-heading {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+
+        .section-tag {
+            display: inline-block;
+
+            padding: 7px 14px;
+            border-radius: 999px;
+
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+
+            color: #22d3ee;
+
+            background: rgba(34, 211, 238, 0.08);
+            border: 1px solid rgba(34, 211, 238, 0.25);
+        }
+
+        .section-heading h2 {
+            margin: 18px 0 12px;
+
+            font-size: clamp(36px, 5vw, 60px);
+            line-height: 1.05;
+        }
+
+        .section-heading h2 span {
+            background: linear-gradient(
+                90deg,
+                #22d3ee,
+                #a855f7
+            );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-heading p {
+            margin: 0;
+
+            color: #9ca8cc;
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        /* ================= SUBJECT GRID ================= */
+
+        .subjects-grid {
+            max-width: 1200px;
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(240px, 1fr)
+            );
+
+            gap: 22px;
+        }
+
+        .subject-card {
+            padding: 28px;
+
+            min-height: 260px;
+
+            border-radius: 20px;
+
+            background: rgba(15, 25, 54, 0.75);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            display: flex;
+            flex-direction: column;
+
+            transition:
+                transform 0.25s,
+                border-color 0.25s,
+                box-shadow 0.25s;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-7px);
+
+            border-color: rgba(34, 211, 238, 0.45);
+
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .subject-icon {
+            width: 60px;
+            height: 60px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 16px;
+
+            background: rgba(34, 211, 238, 0.08);
+
+            font-size: 30px;
+
+            margin-bottom: 20px;
+        }
+
+        .subject-card h3 {
+            margin: 0 0 10px;
+
+            font-size: 23px;
+        }
+
+        .subject-card p {
+            margin: 0;
+
+            color: #9ca8cc;
+
+            line-height: 1.6;
+
+            flex: 1;
+        }
+
+        .subject-btn {
+            margin-top: 22px;
+
+            width: 100%;
+
+            background: linear-gradient(
+                90deg,
+                rgba(34, 211, 238, 0.15),
+                rgba(168, 85, 247, 0.15)
+            );
+
+            border-color: rgba(34, 211, 238, 0.25);
+        }
+
+        .subject-btn:hover {
+            background: linear-gradient(
+                90deg,
+                rgba(34, 211, 238, 0.25),
+                rgba(168, 85, 247, 0.25)
+            );
+        }
+
+        .error-card {
+            grid-column: 1 / -1;
+
+            padding: 30px;
+            text-align: center;
+
+            border-radius: 15px;
+
+            background: rgba(255, 60, 60, 0.08);
+            border: 1px solid rgba(255, 60, 60, 0.2);
+
+            color: #ff9b9b;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            header {
+                flex-wrap: wrap;
+            }
+
+            header h1 {
+                width: 100%;
+                margin-right: 0;
+            }
+
+            #subjects-section {
+                padding: 60px 5%;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                padding: 14px;
+            }
+
+            header button,
+            header label {
+                font-size: 12px;
+            }
+
+            #xb {
+                width: 70px;
+            }
+
+            .section-heading h2 {
+                font-size: 38px;
+            }
+
+            .subjects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================= VISGEN / PHYSICS HEADER ================= -->
+
+    <header>
+
+        <h1>VISGEN · 3D PHYSICS LAB</h1>
+
+        <label style="margin:0">
+            Class
+
+            <select id="cls">
+                <option>9</option>
+                <option>10</option>
+                <option>1PU</option>
+                <option>2PU</option>
+            </select>
+        </label>
+
+        <button
+            id="visgenHomeBtn"
+            onclick="goToVISGEN()">
+            🏠 VISGEN Home
+        </button>
+
+        <button onclick="go()">
+            ⚛ Physics Home
+        </button>
+
+        <span id="xp" class="pill">
+            XP: 0
+        </span>
+
+        <div id="xb">
+            <i id="bar"></i>
+        </div>
+
+        <span id="net" class="pill">
+            ● Offline Ready
+        </span>
+
+    </header>
+
+
+    <!-- ================= VISGEN SUBJECT SECTION ================= -->
+
+    <section id="subjects-section">
+
+        <div class="section-heading">
+
+            <span class="section-tag">
+                EXPLORE STEM
+            </span>
+
+            <h2>
+                Learn STEM by
+                <span>Seeing It</span>
+            </h2>
+
+            <p>
+                Interactive simulations and virtual laboratories
+                designed for Classes 8–10.
+            </p>
+
+        </div>
+
+
+        <div id="subjects" class="subjects-grid">
+
+            <!-- Mathematics -->
+
+            <div class="subject-card">
+
+                <div class="subject-icon">
+                    📐
+                </div>
+
+                <h3>
+                    Mathematics
+                </h3>
+
+                <p>
+                    Explore mathematics through interactive
+                    3D visualisations, simulations and
+                    problem solving.
+                </p>
+
+                <button
+                    class="subject-btn"
+                    onclick="openSubject('mathematics')">
+
+                    Explore Mathematics →
+
+                </button>
+
+            </div>
+
+
+            <!-- Physics -->
+
+            <div class="subject-card">
+
+                <div class="subject-icon">
+                    ⚛️
+                </div>
+
+                <h3>
+                    Physics
+                </h3>
+
+                <p>
+                    Understand physics through interactive
+                    simulations, virtual experiments and
+                    visual models.
+                </p>
+
+                <button
+                    class="subject-btn"
+                    onclick="openSubject('physics')">
+
+                    Enter Physics Lab →
+
+                </button>
+
+            </div>
+
+
+            <!-- Biology -->
+
+            <div class="subject-card">
+
+                <div class="subject-icon">
+                    🧬
+                </div>
+
+                <h3>
+                    Biology
+                </h3>
+
+                <p>
+                    Explore biology through interactive
+                    diagrams, virtual laboratories and
+                    visual learning.
+                </p>
+
+                <button
+                    class="subject-btn"
+                    onclick="openSubject('biology')">
+
+                    Explore Biology →
+
+                </button>
+
+            </div>
+
+
+            <!-- Chemistry -->
+
+            <div class="subject-card">
+
+                <div class="subject-icon">
+                    🧪
+                </div>
+
+                <h3>
+                    Chemistry
+                </h3>
+
+                <p>
+                    Learn chemistry using interactive
+                    experiments, visual models and
+                    simulations.
+                </p>
+
+                <button
+                    class="subject-btn"
+                    onclick="openSubject('chemistry')">
+
+                    Explore Chemistry →
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+        function goToVISGEN() {
+            window.location.href = "/";
+        }
+
+
+        function go() {
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+
+
+        function openSubject(subject) {
+            const pages = {
+                mathematics: "/maths",
+                physics: "/physics",
+                biology: "/biology",
+                chemistry: "/chemistry"
+            };
+
+            if (pages[subject]) {
+                window.location.href = pages[subject];
+            }
+
+        }
+
+
+        /* XP */
+
+        let xp = Number(
+            localStorage.getItem("visgen_xp") || 0
+        );
+
+        function updateXP() {
+
+            const xpElement =
+                document.getElementById("xp");
+
+            const bar =
+                document.getElementById("bar");
+
+            xpElement.textContent =
+                `XP: ${xp}`;
+
+            const progress =
+                Math.min((xp % 100), 100);
+
+            bar.style.width =
+                progress + "%";
+
+        }
+
+        updateXP();
+
+
+        /* NETWORK STATUS */
+
+        function updateNetworkStatus() {
+
+            const net =
+                document.getElementById("net");
+
+            if (navigator.onLine) {
+
+                net.textContent =
+                    "● Online";
+
+            } else {
+
+                net.textContent =
+                    "● Offline Ready";
+
+            }
+
+        }
+
+        window.addEventListener(
+            "online",
+            updateNetworkStatus
+        );
+
+        window.addEventListener(
+            "offline",
+            updateNetworkStatus
+        );
+
+        updateNetworkStatus();
+
+    </script>
+
+</body>
+</html>

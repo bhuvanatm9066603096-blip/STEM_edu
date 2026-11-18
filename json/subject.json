@@ -1,0 +1,39 @@
+{
+    "subjects": [
+        {
+            "id": "mathematics",
+            "name": "Mathematics",
+            "icon": "📐",
+            "description": "Explore mathematics through interactive 3D visualizations and problem solving.",
+            "page": "subjects/mathematics/mathversefinall.html",
+            "available": true
+        },
+
+        {
+            "id": "physics",
+            "name": "Physics",
+            "icon": "⚛️",
+            "description": "Learn physics through simulations, virtual experiments and interactive models.",
+            "page": "subjects/physics/mathverse_physics.html",
+            "available": true
+        },
+
+        {
+            "id": "biology",
+            "name": "Biology",
+            "icon": "🧬",
+            "description": "Explore biology through interactive diagrams, virtual labs and visual learning.",
+            "page": "subjects/biology/bio-lab-web.html",
+            "available": true
+        },
+
+        {
+            "id": "chemistry",
+            "name": "Chemistry",
+            "icon": "🧪",
+            "description": "Learn chemistry using interactive experiments and visual simulations.",
+            "page": "subjects/chemistry/chemistry.html",
+            "available": true
+        }
+    ]
+}

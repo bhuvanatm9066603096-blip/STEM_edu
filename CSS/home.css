@@ -1,0 +1,460 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #070b18;
+    --panel: rgba(15, 23, 42, 0.78);
+    --panel-border: rgba(255, 255, 255, 0.10);
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --blue: #38bdf8;
+    --purple: #a78bfa;
+    --green: #34d399;
+    --pink: #f472b6;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.16), transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(167, 139, 250, 0.15), transparent 30%),
+        radial-gradient(circle at 50% 90%, rgba(52, 211, 153, 0.10), transparent 30%),
+        var(--bg);
+    overflow-x: hidden;
+}
+
+
+/* =========================
+   BACKGROUND
+========================= */
+
+.background {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.25;
+    animation: float 10s ease-in-out infinite;
+}
+
+.orb.one {
+    width: 280px;
+    height: 280px;
+    background: #0ea5e9;
+    left: -80px;
+    top: 180px;
+}
+
+.orb.two {
+    width: 320px;
+    height: 320px;
+    background: #8b5cf6;
+    right: -100px;
+    top: 80px;
+    animation-delay: 2s;
+}
+
+.orb.three {
+    width: 220px;
+    height: 220px;
+    background: #10b981;
+    left: 45%;
+    bottom: -100px;
+    animation-delay: 4s;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+
+    50% {
+        transform: translateY(-25px) translateX(15px);
+    }
+}
+
+
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar {
+    width: 100%;
+    padding: 18px 6%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(7, 11, 24, 0.72);
+    backdrop-filter: blur(18px);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: 0.5px;
+}
+
+.logo-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+    box-shadow: 0 8px 30px rgba(56, 189, 248, 0.25);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.nav-links a {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.25s;
+}
+
+.nav-links a:hover {
+    color: white;
+}
+
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+    max-width: 1200px;
+    margin: auto;
+    padding: 90px 24px 55px;
+    text-align: center;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 999px;
+    background: rgba(56, 189, 248, 0.08);
+    color: #7dd3fc;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 22px;
+}
+
+.hero h1 {
+    max-width: 850px;
+    margin: auto;
+    font-size: clamp(42px, 7vw, 78px);
+    line-height: 0.98;
+    letter-spacing: -3px;
+}
+
+.gradient-text {
+    background: linear-gradient(
+        90deg,
+        #38bdf8,
+        #a78bfa,
+        #34d399
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero-description {
+    max-width: 680px;
+    margin: 25px auto 0;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.7;
+}
+
+
+/* =========================
+   LAB CARDS
+========================= */
+
+.labs {
+    max-width: 1150px;
+    margin: 25px auto 80px;
+    padding: 0 24px;
+}
+
+.lab-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.lab-card {
+    position: relative;
+    min-height: 390px;
+    padding: 32px;
+    border-radius: 26px;
+    border: 1px solid var(--panel-border);
+    background: var(--panel);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+    transition:
+        transform 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+.lab-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.lab-card:hover {
+    transform: translateY(-8px);
+}
+
+.lab-card:hover::before {
+    opacity: 1;
+}
+
+.math-card {
+    border-color: rgba(56, 189, 248, 0.20);
+}
+
+.math-card::before {
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(56, 189, 248, 0.16),
+            transparent 45%
+        );
+}
+
+.math-card:hover {
+    border-color: rgba(56, 189, 248, 0.55);
+    box-shadow: 0 25px 70px rgba(14, 165, 233, 0.16);
+}
+
+.bio-card {
+    border-color: rgba(244, 114, 182, 0.20);
+}
+
+.bio-card::before {
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(244, 114, 182, 0.15),
+            transparent 45%
+        );
+}
+
+.bio-card:hover {
+    border-color: rgba(244, 114, 182, 0.55);
+    box-shadow: 0 25px 70px rgba(236, 72, 153, 0.14);
+}
+
+.lab-content {
+    position: relative;
+    z-index: 2;
+}
+
+.lab-icon {
+    width: 76px;
+    height: 76px;
+    display: grid;
+    place-items: center;
+    font-size: 38px;
+    border-radius: 22px;
+    margin-bottom: 28px;
+}
+
+.math-icon {
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.22);
+}
+
+.bio-icon {
+    background: rgba(244, 114, 182, 0.12);
+    border: 1px solid rgba(244, 114, 182, 0.22);
+}
+
+.lab-card h2 {
+    font-size: 31px;
+    margin-bottom: 12px;
+}
+
+.lab-card p {
+    max-width: 470px;
+    color: #a8b4c7;
+    line-height: 1.65;
+    margin-bottom: 25px;
+}
+
+.lab-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 30px;
+}
+
+.feature {
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #cbd5e1;
+    font-size: 12px;
+}
+
+.open-lab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    transition: gap 0.25s ease;
+}
+
+.lab-card:hover .open-lab {
+    gap: 14px;
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+.stats {
+    max-width: 900px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+}
+
+.stats-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--panel-border);
+    border-radius: 22px;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(15px);
+    overflow: hidden;
+}
+
+.stat {
+    padding: 28px 15px;
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat:last-child {
+    border-right: none;
+}
+
+.stat strong {
+    display: block;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.stat span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+    padding: 28px 20px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: #64748b;
+    font-size: 13px;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 800px) {
+
+    .navbar {
+        padding: 14px 18px;
+    }
+
+    .nav-links {
+        gap: 12px;
+    }
+
+    .nav-links a:nth-child(n + 2) {
+        display: none;
+    }
+
+    .hero {
+        padding-top: 65px;
+    }
+
+    .hero h1 {
+        letter-spacing: -2px;
+    }
+
+    .hero-description {
+        font-size: 16px;
+    }
+
+    .lab-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lab-card {
+        min-height: auto;
+    }
+
+    .stats-box {
+        grid-template-columns: 1fr;
+    }
+
+    .stat {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .stat:last-child {
+        border-bottom: none;
+    }
+}

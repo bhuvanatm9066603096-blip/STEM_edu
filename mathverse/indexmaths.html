@@ -1,0 +1,335 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MATHVERSE 3D MATH LAB</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:15px system-ui,sans-serif;background:#0b1020;color:#e8ecff;height:100vh;display:flex;flex-direction:column}
+header{display:flex;gap:10px;align-items:center;padding:8px 12px;background:#141a33;flex-wrap:wrap}
+h1{font-size:17px;margin:0;color:#7fd1ff;letter-spacing:1px}
+select,input[type=text],button{background:#222b52;color:#fff;border:1px solid #3a4680;border-radius:8px;padding:6px 10px;font:inherit}
+button{cursor:pointer}button:hover,.on{background:#3b55c8}
+nav{display:flex;gap:6px;overflow-x:auto;padding:6px 12px;background:#10162c}nav button{white-space:nowrap}
+#chips{padding:5px 12px;font-size:13px;display:flex;gap:6px;flex-wrap:wrap;background:#0e1328;align-items:center}#chips button{padding:2px 9px;font-size:13px;border-radius:14px}
+main{flex:1;display:grid;grid-template-columns:1fr 370px;min-height:0}
+#c{width:100%;height:100%;display:block;touch-action:none;background:radial-gradient(circle at 50% 30%,#1c2a5a,#080c1c)}
+aside{overflow:auto;padding:12px;background:#121830}
+label{display:block;margin:6px 0 0;font-size:13px}input[type=range]{width:100%}
+#info{margin-top:10px;line-height:1.45;font-size:14px;background:#0b1126;padding:4px 12px;border-radius:10px}#info p{margin:8px 0}
+@media(max-width:800px){main{grid-template-columns:1fr;grid-template-rows:46vh 1fr}}
+:root{--c:#22d3ee;--p:#a855f7;--b:#3b82f6}
+body{background:radial-gradient(1200px 600px at 20% -10%,#1b1f5e66,transparent),#060b1f}
+header{background:linear-gradient(90deg,#0b1030,#1a0f3a);border-bottom:1px solid #22d3ee55;box-shadow:0 0 24px #22d3ee22;position:relative;z-index:2}
+h1{background:linear-gradient(90deg,var(--c),var(--p));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:2px}
+select,input[type=text],button{background:#111a3d;border:1px solid #3b82f666;transition:.2s}
+button:hover,.on{background:linear-gradient(135deg,#3b82f6,#a855f7);box-shadow:0 0 14px #a855f777;border-color:transparent}
+button:disabled{opacity:.6;cursor:default}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+input[type=range]{accent-color:var(--c)}
+aside{background:linear-gradient(#0d1233,#0a0f26);border-left:1px solid #a855f733}
+#info,.card{background:#0e1538cc;border:1px solid #22d3ee33;border-radius:12px;box-shadow:0 0 18px #3b82f61a;animation:fi .4s}
+.card{padding:10px 12px;margin:8px 0}h2,h3{margin:6px 0;color:var(--c)}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}}
+.pill{font-size:12px;padding:3px 9px;border-radius:12px;background:#0e1538;border:1px solid #a855f755}
+#xb,.pb{height:6px;background:#1e2a5a;border-radius:4px;overflow:hidden;min-width:60px}#xb{width:90px}#bar,.pb i{display:block;height:100%;background:linear-gradient(90deg,var(--c),var(--p));transition:width .6s}
+#tabs{display:flex;gap:6px}#tabs button{flex:1}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.opt{font-size:17px;padding:12px}
+.opt.ok{background:#0f766e!important;box-shadow:0 0 14px #2dd4bf88}.opt.no{background:#9f1239!important}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bd{display:inline-flex;flex-direction:column;align-items:center;width:76px;font-size:22px;margin:3px;padding:6px 2px;border-radius:10px;background:#111a3d;opacity:.35;filter:grayscale(1)}.bd small{font-size:10px;text-align:center}.on2{opacity:1;filter:none;box-shadow:0 0 14px #a855f7aa}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:linear-gradient(135deg,#3b82f6,#a855f7);padding:10px 18px;border-radius:24px;z-index:9;box-shadow:0 0 24px #a855f7;display:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:800px){header{gap:6px}.opts{grid-template-columns:1fr}}
+</style></head><body>
+<header><h1>MATHVERSE · 3D MATH LAB</h1><label style="margin:0">Class <select id="cls"><option>9</option><option>10</option><option>1PU</option><option>2PU</option></select></label><select id="lv" aria-label="Difficulty"><option value="0">Beginner</option><option value="1">Intermediate</option><option value="2">Advanced</option></select><select id="md" aria-label="Mode"><option value="p">Practice mode</option><option value="x">Exam mode</option></select><button onclick="go()">🌌 Galaxy</button><button onclick="daily()">🎯 Daily</button><button onclick="location.href='/'">🏠 VISGEN Home</button><span id="xp" class="pill"></span><div id="xb"><i id="bar"></i></div><span id="net" class="pill"></span></header>
+<nav id="nav"></nav><div id="chips"></div>
+<main><canvas id="c"></canvas><aside><div id="dash"></div><div id="tabs"><button data-t="e" onclick="tab('e')">🔭 Explore</button><button data-t="p" onclick="tab('p')">🎯 Practice</button><button data-t="z" onclick="tab('z')">📝 Quiz</button><button data-t="t" onclick="tab('t')">🧠 Tutor</button></div><div id="exp"><div id="ctl"></div><div id="info"></div></div><div id="pq"></div></aside></main>
+<script>
+const $=id=>document.getElementById(id),R=Math,PI=R.PI,f=n=>isFinite(n)?+(+n).toFixed(3):'undefined',rad=d=>d*PI/180,deg=r=>r*180/PI,h=(t,b)=>`<p><b>${t}:</b> ${b}</p>`;
+const C=$('c'),X=C.getContext('2d');let W,H,cam={y:.5,p:.35,z:1},v={},cur=0,last='',drag=0;
+function rs(){const r=C.getBoundingClientRect(),d=devicePixelRatio||1;C.width=r.width*d;C.height=r.height*d;X.setTransform(d,0,0,d,0,0);W=r.width;H=r.height}
+new ResizeObserver(rs).observe(C);
+/* ---------- tiny 3D engine (orthographic, offline) ---------- */
+const sc=()=>R.min(W,H)/12*cam.z;
+function P(q){const cy=R.cos(cam.y),sy=R.sin(cam.y),cp=R.cos(cam.p),sp=R.sin(cam.p),x1=q[0]*cy+q[2]*sy,z1=-q[0]*sy+q[2]*cy,s=sc();return[W/2+x1*s,H/2-(q[1]*cp-z1*sp)*s,q[1]*sp+z1*cp]}
+function U(sx,sy){const s=sc(),x1=(sx-W/2)/s,y1=-(sy-H/2)/s,cy=R.cos(cam.y),c=R.abs(cy)<.15?.15:cy,x=x1/c;return[x,(y1-x*R.sin(cam.y)*R.sin(cam.p))/R.cos(cam.p)]}
+const L=(a,b,c='#fff',w=2)=>{a=P(a);b=P(b);X.strokeStyle=c;X.lineWidth=w;X.beginPath();X.moveTo(a[0],a[1]);X.lineTo(b[0],b[1]);X.stroke()};
+const PL=(pts,c,w=3)=>{X.strokeStyle=c;X.lineWidth=w;X.beginPath();pts.forEach((q,i)=>{q=P(q);i?X.lineTo(q[0],q[1]):X.moveTo(q[0],q[1])});X.stroke()};
+const F=(pts,fill,st)=>{X.beginPath();pts.forEach((q,i)=>{q=P(q);i?X.lineTo(q[0],q[1]):X.moveTo(q[0],q[1])});X.closePath();if(fill){X.fillStyle=fill;X.fill()}if(st){X.strokeStyle=st;X.lineWidth=1.5;X.stroke()}};
+const D=(p,r,c)=>{p=P(p);const g=X.createRadialGradient(p[0]-r/3,p[1]-r/3,r/6,p[0],p[1],r);g.addColorStop(0,'#fff');g.addColorStop(1,c);X.fillStyle=g;X.beginPath();X.arc(p[0],p[1],r,0,7);X.fill()};
+const TX=(p,s,c='#fff',n=14)=>{p=P(p);X.fillStyle=c;X.font=n+'px sans-serif';X.fillText(s,p[0]+5,p[1]-5)};
+const AR=(a,b,c,w=3)=>{L(a,b,c,w);const A=P(a),B=P(b),an=R.atan2(B[1]-A[1],B[0]-A[0]);X.fillStyle=c;X.beginPath();X.moveTo(B[0],B[1]);X.lineTo(B[0]-13*R.cos(an-.4),B[1]-13*R.sin(an-.4));X.lineTo(B[0]-13*R.cos(an+.4),B[1]-13*R.sin(an+.4));X.fill()};
+function CU(c,a,b,d,hu,ry=0,rx=0,s=70){const V=[];for(let i=0;i<8;i++){let x=(i&1?a:-a)/2,y=(i&2?b:-b)/2,z=(i&4?d:-d)/2,t=x*R.cos(ry)+z*R.sin(ry);z=-x*R.sin(ry)+z*R.cos(ry);x=t;t=y*R.cos(rx)-z*R.sin(rx);z=y*R.sin(rx)+z*R.cos(rx);y=t;V.push([c[0]+x,c[1]+y,c[2]+z])}
+[[0,1,3,2],[4,5,7,6],[0,1,5,4],[2,3,7,6],[0,2,6,4],[1,3,7,5]].map(q=>({q,z:q.reduce((t,i)=>t+P(V[i])[2],0)})).sort((p,q)=>p.z-q.z).forEach((o,i)=>F(o.q.map(i=>V[i]),`hsl(${hu},${s}%,${28+i*7}%)`,'#0006'))}
+function AX(n=6,z=0){for(let i=-n;i<=n;i++){L([i,-n,z],[i,n,z],'#ffffff14',1);L([-n,i,z],[n,i,z],'#ffffff14',1)}AR([-n,0,z],[n,0,z],'#ff8a8a',2);AR([0,-n,z],[0,n,z],'#8aff9e',2);TX([n,0,z],'x');TX([0,n,z],'y')}
+function RB(g,x0,x1,col){let q=null;for(let i=0;i<=120;i++){const x=x0+(x1-x0)*i/120,y=g(x),p=R.abs(y)<7?[x,y]:null;if(p&&q){F([[q[0],q[1],-.25],[p[0],p[1],-.25],[p[0],p[1],.25],[q[0],q[1],.25]],col+'55');L([q[0],q[1],0],[p[0],p[1],0],col,3)}q=p}}
+function PRM(pts,fill,st){F(pts.map(p=>[p[0],p[1],-.2]),fill);pts.forEach(p=>L([p[0],p[1],-.2],[p[0],p[1],.2],st,1));F(pts.map(p=>[p[0],p[1],.2]),fill,st)}
+const S=(k,l,a,b,s=1)=>`<label>${l}: <b id="o${k}">${v[k]}</b><input type="range" id="${k}" min="${a}" max="${b}" step="${s}" value="${v[k]}"></label>`;
+const Bt=(l,a)=>`<button onclick="act('${a}')">${l}</button> `;
+const Sel=(k,o)=>`<select id="${k}">${o.map(x=>`<option value="${x[0]}" ${v[k]==x[0]?'selected':''}>${x[1]}</option>`).join('')}</select>`;
+const ang3=(p,q,r)=>{const u=[q[0]-p[0],q[1]-p[1]],w=[r[0]-p[0],r[1]-p[1]];return deg(R.acos(R.max(-1,R.min(1,(u[0]*w[0]+u[1]*w[1])/((R.hypot(...u)*R.hypot(...w))||1)))))};
+function arc(p,q,r,rd,col){const a1=R.atan2(q[1]-p[1],q[0]-p[0]);let dl=R.atan2(r[1]-p[1],r[0]-p[0])-a1;while(dl>PI)dl-=2*PI;while(dl<-PI)dl+=2*PI;PL(Array.from({length:21},(_,i)=>[p[0]+rd*R.cos(a1+dl*i/20),p[1]+rd*R.sin(a1+dl*i/20),0]),col,2)}
+let view='g',tb='e';const m=()=>view=='g'?GAL:M[cur],act=a=>m().act&&m().act(a);
+/* ---------- MODULES ---------- */
+const g={A:[-3.5,-1.5],B:[3.5,-1.5],C:[.5,3],t:[200,340,70],k:0};
+const gp=()=>v.mode=='tri'?[g.A,g.B,g.C].map(p=>[p[0],p[1],0]):g.t.map(a=>[3.5*R.cos(rad(a)),3.5*R.sin(rad(a)),0]);
+let pr={c:[],n:0,a:0,res:-1};
+const FS=[['x²/4',x=>x*x/4,x=>x/2,x=>x**3/12,'x/2'],['sin x',R.sin,R.cos,x=>-R.cos(x),'cos x'],['x³/9 − x',x=>x**3/9-x,x=>x*x/3-1,x=>x**4/36-x*x/2,'x²/3 − 1']];
+const FG=[[0,0],[1.6,0],[1.6,.5],[.55,.5],[.55,1.1],[1.3,1.1],[1.3,1.6],[.55,1.6],[.55,2.6],[0,2.6]];
+let sol=null,wq=0;
+const M=[
+{n:'1 Algebra',v:{a:2,b:3,c:11,s:0,p:1},
+ui:()=>S('a','Coefficient a',1,5)+S('b','Constant b',0,9)+S('c','Right side c',1,30)+'<p>'+Bt('◀ Back','p')+Bt('Next step ▶','n')+Bt('Reset','r')+'</p>',
+act(a){if(a=='n'&&v.s<3){v.s++;v.p=0}if(a=='p'&&v.s>0){v.s--;v.p=0}if(a=='r'){v.s=0;v.p=1}},
+d(dt){v.p=R.min(1,v.p+dt*.8);const{a,b,c,s}=v,tl=s==1||s==2?.3*R.sin(PI*v.p):0,cy=2.8,e1=[-4*R.cos(tl),cy+4*R.sin(tl),0],e2=[4*R.cos(tl),cy-4*R.sin(tl),0];
+CU([0,.1,0],5,.2,3,220);CU([0,1.4,0],.3,2.6,.3,220);
+const put=(e,arr)=>{const py=e[1]-1.7;L(e,[e[0]-1.5,py,0],'#ccc',1);L(e,[e[0]+1.5,py,0],'#ccc',1);CU([e[0],py-.1,0],3.2,.2,2,40);arr.forEach((t,k)=>{const q=[e[0]-1.2+(k%5)*.6,py+.35+R.floor(k/5)*.6,0];if(t){CU(q,.5,.5,.5,205);TX([q[0]-.12,q[1]-.12,.3],'x','#fff',13)}else D(q,9,'#ff9a3c')})};
+const lb=s<2?a:1,lc=s<1?b:0,rc=R.max(0,s<1?c:s<2?c-b:R.round((c-b)/a));
+put(e1,Array(lb).fill(1).concat(Array(lc).fill(0)));put(e2,Array(R.min(30,rc)).fill(0));L(e1,e2,'#ffd35c',6);
+TX([-2.5,6,0],['${a}x + ${b} = ${c}','${a}x = ${c-b}','x = ${f((c-b)/a)}','x = ${f((c-b)/a)}'][s].replace(/\$\{(.+?)\}/g,(_,q)=>eval(q)),'#fff',22)},
+i(){const{a,b,c,s}=v,x=f((c-b)/a),E=[`${a}x + ${b} = ${c}`,`${a}x = ${c-b}`,`x = ${x}`,`x = ${x}`],Wt=['The scale is balanced: left pan = right pan. Each box <b>x</b> hides the same unknown weight; each ball weighs 1.',`Remove ${b} balls from BOTH pans. The beam wobbles for a moment, then balances again.`,`Split both pans into ${a} equal groups. One box now balances ${x} balls.`,`Check: ${a}×${x} + ${b} = ${f(a*x+b)} ✔`];
+return h('Step '+s+' of 3','<big>'+E[s]+'</big>')+`<p>${Wt[s]}</p>`+h('Golden rule','Whatever you do to one side, do to the other side.')+(c<b?h('Note','c is smaller than b here, so x is negative (not shown with balls).'):'')}},
+{n:'2 Geometry',v:{mode:'tri'},
+ui:()=>Sel('mode',[['tri','Triangle & angle sum'],['cir','Circle theorem']])+'<p>👆 Drag the coloured points!</p>',
+pick(x,y){const ps=gp();let b=-1,bd=28;ps.forEach((p,i)=>{const q=P(p),d=R.hypot(q[0]-x,q[1]-y);if(d<bd){bd=d;b=i}});g.k=b;return b>=0},
+drag(x,y){const u=U(x,y);if(v.mode=='tri')g['ABC'[g.k]]=[R.max(-6,R.min(6,u[0])),R.max(-5,R.min(5,u[1]))];else g.t[g.k]=deg(R.atan2(u[1],u[0]))},
+d(){const p=gp(),N=['A','B','C'],cl=['#ff6b6b','#6bff8a','#6bb8ff'];
+if(v.mode=='tri'){const z=q=>[q[0],q[1],-.3];F(p.map(z),'rgba(80,160,255,.25)');[[0,1],[1,2],[2,0]].forEach(([i,j])=>F([[p[i][0],p[i][1],-.3],[p[j][0],p[j][1],-.3],[p[j][0],p[j][1],.3],[p[i][0],p[i][1],.3]],'rgba(60,120,220,.35)','#8cf'));F(p.map(q=>[q[0],q[1],.3]),'rgba(120,200,255,.35)','#fff');
+p.forEach((q,i)=>{arc(q,p[(i+1)%3],p[(i+2)%3],.9,cl[i]);D([q[0],q[1],.3],11,cl[i]);TX([q[0],q[1]+.5,.3],N[i]+' '+f(ang3(q,p[(i+1)%3],p[(i+2)%3]))+'°',cl[i],15)})}
+else{const O=[0,0,0],[A,B,Q]=p;PL(Array.from({length:91},(_,i)=>[3.5*R.cos(i*PI/45),3.5*R.sin(i*PI/45),0]),'#7fd1ff',3);F([A,B,Q],'rgba(255,200,80,.15)');L(O,A,'#ff6b6b');L(O,B,'#ff6b6b');L(Q,A,'#6bff8a');L(Q,B,'#6bff8a');arc(O,A,B,.8,'#ff6b6b');arc(Q,A,B,.9,'#6bff8a');D(O,6,'#fff');TX(O,'O');[A,B,Q].forEach((q,i)=>{D(q,11,['#ff6b6b','#6bb8ff','#6bff8a'][i]);TX(q,['A','B','P'][i],'#fff',16)})}},
+i(){const p=gp();if(v.mode=='tri'){const[A,B,C]=p,a=R.hypot(B[0]-C[0],B[1]-C[1]),b=R.hypot(C[0]-A[0],C[1]-A[1]),c=R.hypot(A[0]-B[0],A[1]-B[1]),an=[A,B,C].map((q,i)=>ang3(q,p[(i+1)%3],p[(i+2)%3])),ar=R.abs((B[0]-A[0])*(C[1]-A[1])-(C[0]-A[0])*(B[1]-A[1]))/2,mx=R.max(...an);
+return h('Sides',`a=${f(a)}, b=${f(b)}, c=${f(c)}`)+h('Angles',an.map(f).join('° + ')+`° = <b>${f(an[0]+an[1]+an[2])}°</b>`)+h('Theorem','Angle sum of a triangle is always 180°, however you move the points.')+h('Area',f(ar)+' sq units')+h('Type',(mx>89.5&&mx<90.5?'right-angled':mx>90.5?'obtuse':'acute')+', '+(R.abs(a-b)<.05&&R.abs(b-c)<.05?'equilateral':R.abs(a-b)<.05||R.abs(b-c)<.05||R.abs(a-c)<.05?'isosceles':'scalene'))}
+const[A,B,Q]=p,O=[0,0,0],ce=ang3(O,A,B),ins=ang3(Q,A,B);return h('Central angle ∠AOB',f(ce)+'°')+h('Inscribed angle ∠APB',f(ins)+'°')+h('Theorem','Angle at the centre = 2 × angle at the circumference (P on the major arc).')+h('Check',R.abs(ins-ce/2)<.5?'∠APB = ½ ∠AOB ✔':'P is on the minor arc: ∠APB = 180° − ½ ∠AOB = '+f(180-ce/2)+'°. Move P to the other side!')}},
+{n:'3 Trigonometry',v:{d:40,auto:1},
+ui:()=>S('d','Angle θ (degrees)',0,360,.5)+'<p>'+Bt('Auto-rotate on/off','a')+'</p>',act(a){v.auto=!v.auto},
+d(dt){if(v.auto){v.d=(v.d+dt*30)%360;$('d').value=v.d;$('od').textContent=f(v.d)}const t=rad(v.d),cx=-3.5,r=2.5,O=[cx,0,0],s=R.sin(t),c=R.cos(t),pt=[cx+r*c,r*s,0],wx=u=>-.6+u*.95;
+L([cx-3,0,0],[cx+3,0,0],'#fff4',1);L([cx,-3,0],[cx,3,0],'#fff4',1);L([-.6,0,0],[6,0,0],'#fff4',1);L([-.6,0,-1.5],[6,0,-1.5],'#fff4',1);
+PL(Array.from({length:97},(_,i)=>[cx+r*R.cos(i*PI/48),r*R.sin(i*PI/48),0]),'#7fd1ff',3);
+const wv=(fn,z,col)=>{PL(Array.from({length:Math.max(2,R.ceil(t*20))},(_,i)=>{const u=t*i/(R.max(2,R.ceil(t*20))-1);return[wx(u),r*fn(u),z]}),col,3);D([wx(t),r*fn(t),z],7,col)};
+wv(R.sin,0,'#ff6b6b');wv(R.cos,-1.5,'#6bff8a');TX([wx(6.3),0,0],'sin (red)','#ff6b6b',12);TX([wx(6.3),-.6,-1.5],'cos (green)','#6bff8a',12);
+L([cx+r,-4.5,0],[cx+r,4.5,0],'#6bb8ff',1);L(pt,[wx(t),pt[1],0],'#fff5',1);
+if(R.abs(c)>.06){const ty=R.max(-4.5,R.min(4.5,r*s/c));L(O,[cx+r,ty,0],'#6bb8ff88',1);D([cx+r,ty,0],6,'#6bb8ff')}
+L([pt[0],0,0],pt,'#ff6b6b',4);L(O,[pt[0],0,0],'#6bff8a',4);L(O,pt,'#fff',3);D(pt,8,'#ffd35c');PL(Array.from({length:21},(_,i)=>[cx+.7*R.cos(t*i/20),.7*R.sin(t*i/20),0]),'#ffd35c',2)},
+i(){const t=rad(v.d),s=R.sin(t),c=R.cos(t),q=v.d<90?'I':v.d<180?'II':v.d<270?'III':'IV';return h('θ',f(v.d)+'° = '+f(t)+' rad (Quadrant '+q+')')+h('<span style=color:#ff6b6b>sin θ</span>',f(s)+' = height of the point on the unit circle')+h('<span style=color:#6bff8a>cos θ</span>',f(c)+' = horizontal distance')+h('<span style=color:#6bb8ff>tan θ</span>',(R.abs(c)<.002?'undefined (cos θ = 0)':f(s/c))+' = sin ÷ cos = length cut on the blue tangent line')+h('Check','sin²θ + cos²θ = '+f(s*s+c*c))+'<p>The red and green waves are the heights traced while the point goes round the circle.</p>'}},
+{n:'4 Graph Explorer',v:{f:'quad',a:1,b:0,c:0,p:0},
+ui:()=>Sel('f',[['lin','Line  y = ax + b'],['quad','Parabola  y = ax² + bx + c'],['sin','Wave  y = a·sin(bx + c)'],['exp','Exponential  y = a·2^(bx) + c']])+S('a','a',-3,3,.1)+S('b','b',-3,3,.1)+S('c','c',-5,5,.1),
+ch(k){if(k=='f')v.p=0},fn(){const{a,b,c}=v;return{lin:x=>a*x+b,quad:x=>a*x*x+b*x+c,sin:x=>a*R.sin(b*x+c),exp:x=>a*R.pow(2,b*x)+c}[v.f]},
+d(dt){v.p=R.min(1,v.p+dt*.7);AX(6);RB(this.fn(),-6,-6+12*v.p,'#4fc3ff')},
+i(){const{f:t,a,b,c}=v;let e,s;if(t=='lin'){e=`y = ${a}x + ${b}`;s=h('Slope a',a+' (steepness; negative = falls)')+h('y-intercept b',b+' (where it crosses the y-axis)')+(a?h('Root',f(-b/a)):'')}
+else if(t=='quad'){const D=b*b-4*a*c;e=`y = ${a}x² + ${b}x + ${c}`;s=h('Opens',a>0?'upwards (a>0)':a<0?'downwards (a<0)':'— a=0 gives a line')+(a?h('Vertex',`(${f(-b/(2*a))}, ${f(c-b*b/(4*a))})`)+h('Discriminant b²−4ac',f(D)+(D>0?' → 2 roots':D==0?' → 1 root':' → no real roots')):'')}
+else if(t=='sin'){e=`y = ${a}·sin(${b}x + ${c})`;s=h('Amplitude |a|',f(R.abs(a)))+(b?h('Period 2π/|b|',f(2*PI/R.abs(b)))+h('Phase shift',f(-c/b)):'')}
+else{e=`y = ${a}·2^(${b}x) + ${c}`;s=h('Asymptote',`y = ${c}`)+h('y-intercept',f(a+c))+h('Behaviour',b>0?'growth':b<0?'decay':'constant')}
+return h('Function','<big>'+e+'</big>')+s+'<p>Change a, b, c and watch the 3D ribbon redraw.</p>'}},
+{n:'5 Calculus',v:{f:0,mode:'d',x:1,h:1.5,lo:-2,hi:2,n:6},
+ui:()=>Sel('f',[[0,'f = x²/4'],[1,'f = sin x'],[2,'f = x³/9 − x']])+Sel('mode',[['d','Derivative (tangent)'],['i','Integral (area)']])+(v.mode=='d'?S('x','Point x',-4,4,.1)+S('h','Gap h (secant → tangent)',.01,3,.01):S('lo','From a',-5,4,.1)+S('hi','To b',-4,5,.1)+S('n','Rectangles n',1,60)),
+ch(k){if(k=='mode')$('ctl').innerHTML=this.ui()},
+d(){const[,fn,,Fi]=FS[v.f];AX(6);RB(fn,-6,6,'#4fc3ff');
+if(v.mode=='d'){const x=+v.x,y=fn(x),hh=+v.h,sl=(fn(x+hh)-y)/hh,t=(fn(x+1e-5)-fn(x-1e-5))/2e-5,ln=(s,c)=>L([x-3,y-3*s,0],[x+3,y+3*s,0],c,3);ln(sl,'#ffa94d');ln(t,'#6bff8a');D([x,y,0],9,'#fff');D([x+hh,fn(x+hh),0],7,'#ffa94d')}
+else{const lo=+v.lo,hi=R.max(lo+.2,+v.hi),n=+v.n,w=(hi-lo)/n;for(let i=0;i<n;i++){const mx=lo+(i+.5)*w,ht=fn(mx);CU([mx,ht/2,0],w*.95,R.abs(ht),.5,ht>=0?200:0)}}},
+i(){const[nm,fn,dv,Fi,ds]=FS[v.f];if(v.mode=='d'){const x=+v.x,hh=+v.h,sl=(fn(x+hh)-fn(x))/hh;return h('Function',nm)+h('<span style=color:#ffa94d>Secant slope</span>',`(f(x+h)−f(x))/h = ${f(sl)}`)+h('<span style=color:#6bff8a>Tangent slope f′(x)</span>',`${ds} = ${f(dv(x))}`)+h('Difference',f(R.abs(sl-dv(x))))+'<p>Slide <b>h</b> towards 0: the orange secant turns into the green tangent. The derivative is that limiting slope.</p>'}
+const lo=+v.lo,hi=R.max(lo+.2,+v.hi),n=+v.n,w=(hi-lo)/n;let s=0;for(let i=0;i<n;i++)s+=fn(lo+(i+.5)*w)*w;const ex=Fi(hi)-Fi(lo);return h('Function',nm)+h('Rectangle sum (midpoint)',f(s))+h('Exact ∫ from a to b',f(ex))+h('Error',f(R.abs(s-ex)))+'<p>More rectangles = better area. Bars below the x-axis (red) count as negative area.</p>'}},
+{n:'6 Vectors',v:{ax:2,ay:1,az:0,bx:0,by:2,bz:1,k:1.5},
+ui:()=>['ax','ay','az'].map(k=>S(k,'A'+k[1],-3,3,.5)).join('')+['bx','by','bz'].map(k=>S(k,'B'+k[1],-3,3,.5)).join('')+S('k','Scalar k',-2,3,.5),
+d(){const{ax,ay,az,bx,by,bz,k}=v,A=[ax,ay,az],B=[bx,by,bz],S2=[ax+bx,ay+by,az+bz],O=[0,0,0];for(let i=-6;i<=6;i++){L([i,0,-6],[i,0,6],'#ffffff12',1);L([-6,0,i],[6,0,i],'#ffffff12',1)}
+AR([-6,0,0],[6,0,0],'#fff5',1);AR([0,-6,0],[0,6,0],'#fff5',1);AR([0,0,-6],[0,0,6],'#fff5',1);TX([6,0,0],'x');TX([0,6,0],'y');TX([0,0,6],'z');
+F([O,A,S2,B],'rgba(255,255,255,.1)');L(A,S2,'#fff7',1);L(B,S2,'#fff7',1);const cr=this.cr(),cm=R.hypot(...cr)||1;
+AR(O,[k*ax,k*ay,k*az],'#ffa94d',2);AR(O,A,'#ff6b6b');AR(O,B,'#6bb8ff');AR(O,S2,'#c58bff');if(R.hypot(...cr)>0)AR(O,cr.map(q=>3*q/cm),'#6bff8a',2);TX(A,'A','#ff6b6b',16);TX(B,'B','#6bb8ff',16);TX(S2,'A+B','#c58bff',16)},
+cr(){const{ax,ay,az,bx,by,bz}=v;return[ay*bz-az*by,az*bx-ax*bz,ax*by-ay*bx]},
+i(){const{ax,ay,az,bx,by,bz,k}=v,mg=(x,y,z)=>R.hypot(x,y,z),dt=ax*bx+ay*by+az*bz,ma=mg(ax,ay,az),mb=mg(bx,by,bz),cr=this.cr();return h('|A|, |B|',f(ma)+', '+f(mb))+h('<span style=color:#c58bff>A + B</span>',`(${ax+bx}, ${ay+by}, ${az+bz}) — the diagonal of the parallelogram`)+h('<span style=color:#ffa94d>k·A</span>',`(${f(k*ax)}, ${f(k*ay)}, ${f(k*az)}), length ${f(R.abs(k)*ma)}: k stretches/flips A`)+h('Dot product A·B',f(dt)+(ma*mb?` → angle = ${f(deg(R.acos(R.max(-1,R.min(1,dt/(ma*mb))))))}°`:''))+h('<span style=color:#6bff8a>Cross A×B</span>',`(${f(cr[0])}, ${f(cr[1])}, ${f(cr[2])}); |A×B| = parallelogram area = ${f(mg(...cr))}. Green arrow shows direction only.`)}},
+{n:'7 Probability',v:{t:'dice',r:3,bl:2,g:1},
+ui:()=>Sel('t',[['dice','Dice'],['coin','Coin'],['balls','Coloured balls']])+(v.t=='balls'?S('r','Red balls',1,8)+S('bl','Blue balls',1,8)+S('g','Green balls',1,8):'')+'<p>'+Bt('Roll ×1','1')+Bt('×10','10')+Bt('×100','100')+Bt('×1000','1000')+Bt('Reset','z')+'</p>',
+init(){this.rz()},rz(){pr={c:Array(6).fill(0),n:0,a:0,res:-1}},
+ch(k){this.rz();if(k=='t')$('ctl').innerHTML=this.ui()},
+pb(){return v.t=='dice'?Array(6).fill(1/6):v.t=='coin'?[.5,.5]:(t=>[v.r/t,v.bl/t,v.g/t])(v.r+v.bl+v.g)},
+act(a){if(a=='z')return this.rz();const p=this.pb();for(let i=0;i<+a;i++){let u=R.random(),j=0;while(j<p.length-1&&u>=p[j]){u-=p[j];j++}pr.c[j]++;pr.n++;pr.res=j}pr.a=+a==1?1:.4},
+d(dt){pr.a=R.max(0,pr.a-dt*1.2);const p=this.pb(),n=p.length,sp=R.min(1.5,6.5/n),mx=R.max(...p),ks=5/mx,sa=pr.a*9;
+if(v.t=='dice'){CU([-4.5,2,0],1.8,1.8,1.8,210,sa+.5,sa*.8+.4);if(pr.res>=0)TX([-4.9,3.6,0],''+(pr.res+1),'#ffd35c',34)}
+else if(v.t=='coin'){const an=pr.a*14+(pr.res==1?PI:0),ring=z=>Array.from({length:25},(_,i)=>{const q=i*PI/12.5;return[-4.5+1.4*R.cos(q),2+1.4*R.sin(q)*R.cos(an),1.4*R.sin(q)*R.sin(an)+z]});F(ring(-.08),'#b8860b');F(ring(.08),'#ffd35c','#fff8');if(pr.res>=0)TX([-4.8,3.9,0],R.cos(an)>0?'Heads':'Tails','#ffd35c',22)}
+else{const cl=['#ff4d4d','#4d8dff','#4dff7a'],bag=[].concat(...[v.r,v.bl,v.g].map((q,i)=>Array(q).fill(cl[i])));bag.forEach((c,i)=>D([-6.2+(i%6)*.75,.4+R.floor(i/6)*.75,0],12,c));if(pr.res>=0){D([-4,4,0],22,cl[pr.res]);TX([-3.2,3.8,0],'last draw','#fff',12)}}
+const lb=v.t=='dice'?['1','2','3','4','5','6']:v.t=='coin'?['H','T']:['Red','Blue','Green'],hu=[0,220,120,40,280,170];
+p.forEach((q,i)=>{const x=-.5+i*sp,th=q*ks,ac=pr.n?R.min(6.5,pr.c[i]/pr.n*ks):0;CU([x-.22,-3+th/2,0],.4,th,.4,0,0,0,0);CU([x+.22,-3+ac/2,0],.4,ac,.4,v.t=='balls'?[0,220,120][i]:hu[i%6]);TX([x-.2,-3.4,0],lb[i],'#fff',12)});
+L([-1,-3,0],[-.5+n*sp,-3,0],'#fff6',1);TX([-.8,3.6,0],'grey = theory   coloured = your experiment','#fff',12)},
+i(){const p=this.pb(),lb=v.t=='dice'?['1','2','3','4','5','6']:v.t=='coin'?['Heads','Tails']:['Red','Blue','Green'];return h('Trials',pr.n)+'<table style="width:100%;font-size:13px"><tr><td>Outcome<td>Theory<td>Actual</tr>'+p.map((q,i)=>`<tr><td>${lb[i]}<td>${f(q)}<td>${pr.n?f(pr.c[i]/pr.n):'–'}</tr>`).join('')+'</table><p>Theory = favourable ÷ total outcomes. Do ×1000: the coloured bars match the grey bars. This is the law of large numbers.</p>'}},
+{n:'8 Matrix',v:{a:1,b:0,c:0,d:1,tx:0,ty:0,t:1},
+ui:()=>['a','b','c','d'].map(k=>S(k,'Matrix '+k,-2,2,.05)).join('')+S('tx','Shift x',-4,4,.5)+S('ty','Shift y',-4,4,.5)+'<p>'+Bt('Rotate 45°','rot')+Bt('Reflect (x-axis)','rx')+Bt('Reflect (y=x)','ry')+Bt('Scale ×1.5','sc')+Bt('Shear','sh')+Bt('Translate','tr')+Bt('Identity','id')+Bt('▶ Replay','pl')+'</p>',
+act(a){const T={rot:[.707,-.707,.707,.707,0,0],rx:[1,0,0,-1,0,0],ry:[0,1,1,0,0,0],sc:[1.5,0,0,1.5,0,0],sh:[1,1,0,1,0,0],tr:[1,0,0,1,3,1.5],id:[1,0,0,1,0,0]};if(T[a])['a','b','c','d','tx','ty'].forEach((k,i)=>v[k]=T[a][i]);v.t=0;$('ctl').innerHTML=this.ui()},
+ch(){v.t=0},
+tf(p,t=v.t){const{a,b,c,d,tx,ty}=v,A=1+(a-1)*t,B=b*t,Cc=c*t,Dd=1+(d-1)*t;return[A*p[0]+B*p[1]+tx*t,Cc*p[0]+Dd*p[1]+ty*t]},
+d(dt){v.t=R.min(1,v.t+dt*.7);AX(6);PRM(FG,'rgba(200,200,200,.2)','#ccc8');PRM(FG.map(p=>this.tf(p)),'rgba(255,140,60,.55)','#ffb36b');const o=this.tf([0,0]),i1=this.tf([1,0]),j1=this.tf([0,1]);AR([o[0],o[1],.3],[i1[0],i1[1],.3],'#ff6b6b',3);AR([o[0],o[1],.3],[j1[0],j1[1],.3],'#6bff8a',3)},
+i(){const{a,b,c,d,tx,ty}=v,dt=a*d-b*c;return h('Matrix',`[ ${a} ${b} ; ${c} ${d} ] + shift (${tx}, ${ty})`)+h('Rule',"x′ = a·x + b·y + shift,  y′ = c·x + d·y + shift")+h('Determinant',f(dt)+(dt<0?' → negative: the shape is flipped (reflection)':' → area is multiplied by '+f(dt)))+h('Columns','Red arrow = where (1,0) goes = (a, c); green arrow = where (0,1) goes = (b, d). The whole shape follows these two arrows.')+h('Sample point',`(1,1) → (${f(a+b+tx)}, ${f(c+d+ty)})`)+'<p>Grey = original F-shape, orange = image. Animation blends from original to final (a straight-line blend, so rotation looks like shrinking in between).</p>'}},
+{n:'9 Word Problems',v:{w:'ladder',L:10,d:6,s1:60,s2:40,D:200,t:0},
+ui:()=>Sel('w',[['ladder','Ladder against a wall'],['train','Two trains meet']])+(v.w=='ladder'?S('L','Ladder length L (m)',5,15)+S('d','Foot distance d (m)',1,14):S('s1','Speed of train A (km/h)',20,100,5)+S('s2','Speed of train B (km/h)',20,100,5)+S('D','Distance apart (km)',50,400,10)+'<p>'+Bt('▶ Replay','pl')+'</p>'),
+ch(k){v.t=0;if(k=='w')$('ctl').innerHTML=this.ui()},act(){v.t=0},
+d(dt){if(v.w=='ladder'){const{L:l,d}=v,hh=R.sqrt(R.max(0,l*l-d*d)),k=6/R.max(l,d,hh,1),fx=3-d*k,ty=-2+hh*k;CU([0,-2.15,0],12,.3,3,120);CU([3.3,1,0],.6,7,3,30);L([fx,-2,-.3],[3,ty,-.3],'#d9a066',5);L([fx,-2,.3],[3,ty,.3],'#d9a066',5);for(let i=1;i<7;i++){const q=i/7;L([fx+(3-fx)*q,-2+(ty+2)*q,-.3],[fx+(3-fx)*q,-2+(ty+2)*q,.3],'#b3804d',3)}
+L([fx,-1.99,0],[3,-1.99,0],'#6bff8a',2);L([3,-2,0],[3,ty,0],'#6bb8ff',2);L([fx,-2,0],[3,ty,0],'#d9a066',1);TX([(fx+3)/2,-2.7,0],'d = '+d+' m','#6bff8a',14);TX([2,(ty-2)/2,0],'h = '+f(hh)+' m','#6bb8ff',14);TX([(fx+3)/2-1,(ty-2)/2+.5,0],'L = '+l+' m','#ffd35c',14);F([[3,-2,0],[2.6,-2,0],[2.6,-1.6,0],[3,-1.6,0]],'#fff3')}
+else{const{s1,s2,D:dd}=v,tm=dd/(s1+s2);v.t=R.min(tm,v.t+dt*tm/4);const k=12/dd;L([-6,0,0],[6,0,0],'#fff8',3);CU([-6.1,-.3,0],.3,.6,1.5,0);CU([6.1,-.3,0],.3,.6,1.5,0);[[-6+s1*v.t*k,200],[6-s2*v.t*k,20]].forEach(([x,hu],i)=>{for(let j=0;j<3;j++)CU([x+(i?j:-j)*.9,.45,0],.8,.7,.9,hu);TX([x-.5,1.5,0],i?'B':'A','#fff',16)});if(v.t>=tm-1e-6){D([-6+s1*tm*k,0,0],10,'#ffd35c');TX([-5,-1.5,0],'They meet here!','#ffd35c',16)}TX([-4,-2.5,0],'Distance apart: '+dd+' km','#fff',14)}},
+i(){if(v.w=='ladder'){const{L:l,d}=v,h2=l*l-d*d;return h('Given',`ladder L = ${l} m, foot d = ${d} m from the wall`)+h('Required','height h reached on the wall')+h('Diagram','a right-angled triangle: wall ⟂ ground, ladder = hypotenuse')+h('Equation','h² + d² = L²')+(h2>0?h('Calculation',`h² = ${l*l} − ${d*d} = ${h2}`)+h('Answer','h = '+f(R.sqrt(h2))+' m')+h('Angle with ground',f(deg(R.atan(R.sqrt(h2)/d)))+'°'):'<p>The ladder must be longer than d!</p>')}
+const{s1,s2,D:dd}=v,tm=dd/(s1+s2);return h('Given',`A: ${s1} km/h, B: ${s2} km/h, start ${dd} km apart, moving towards each other`)+h('Required','time until they meet')+h('Idea','each hour the gap shrinks by '+(s1+s2)+' km')+h('Equation',`${s1}t + ${s2}t = ${dd}`)+h('Answer','t = '+f(tm)+' h; A has travelled '+f(s1*tm)+' km')+h('Clock','t = '+f(v.t)+' h')}},
+{n:'10 Step Solver',v:{},
+ui:()=>'<label>Type an equation (e.g. <i>2x+3=11</i> or <i>x^2-5x+6=0</i>)<input type="text" id="q" value="x^2-5x+6=0" style="width:100%"></label><p>'+Bt('Solve','s')+'</p><p><small>Works offline for linear <b>ax+b=c</b> and quadratic <b>ax^2+bx+c=0</b>.</small></p>',
+init(){this.act('s')},
+act(){const s=$('q').value.replace(/\s/g,'').toLowerCase(),k=q=>q===''||q=='+'?1:q=='-'?-1:+q;let a,b,c,ty,m;
+if(m=s.match(/^([+-]?\d*\.?\d*)x\^2(?:([+-]\d*\.?\d*)x)?(?:([+-]\d*\.?\d+))?=0$/)){ty='q';a=k(m[1]);b=m[2]?k(m[2]):0;c=m[3]?+m[3]:0}
+else if(m=s.match(/^([+-]?\d*\.?\d*)x([+-]\d*\.?\d+)?=([+-]?\d*\.?\d+)$/)){ty='l';a=k(m[1]);b=m[2]?+m[2]:0;c=+m[3]}
+if(!ty||!a){sol={e:1,html:'<p>Sorry, I could not read that. Try <b>3x+5=20</b> or <b>x^2-4x+3=0</b>.</p>'};return}
+if(ty=='l'){const x=(c-b)/a;sol={ty,a,b,c,x,html:h('Given',`${a}x + ${b} = ${c}`)+h('Required','the value of x')+h('Formula','x = (c − b) ÷ a')+h('Substitution',`x = (${c} − ${b}) ÷ ${a}`)+h('Calculation',`${c} − ${b} = ${f(c-b)}, then ÷ ${a} = ${f(x)}`)+h('Final answer','<big>x = '+f(x)+'</big>')+h('Why',`Subtracting ${b} removes the constant from the left; dividing by ${a} leaves x alone. Graph: the line y=${a}x+${b} meets y=${c} at x=${f(x)}.`)}}
+else{const Ds=b*b-4*a*c,r=Ds>=0?[(-b+R.sqrt(Ds))/(2*a),(-b-R.sqrt(Ds))/(2*a)]:[];sol={ty,a,b,c,r,html:h('Given',`${a}x² + ${b}x + ${c} = 0`)+h('Required','the roots (x values where y = 0)')+h('Formula','x = (−b ± √(b² − 4ac)) ÷ 2a')+h('Substitution',`x = (−(${b}) ± √(${b}² − 4·${a}·${c})) ÷ (2·${a})`)+h('Calculation',`Discriminant = ${b*b} − ${4*a*c} = ${f(Ds)}`+(Ds>=0?`, √ = ${f(R.sqrt(Ds))}`:''))+h('Final answer',Ds<0?'<big>No real roots</big>':'<big>x = '+f(r[0])+(Ds>0?' or x = '+f(r[1]):'')+'</big>')+h('Why','The formula comes from completing the square. The discriminant tells how many times the parabola touches the x-axis: >0 two, =0 one, <0 none. Check on the 3D graph!')}}},
+d(){AX(6);if(!sol||sol.e)return;const{a,b,c}=sol;if(sol.ty=='l'){RB(x=>a*x+b,-6,6,'#4fc3ff');L([-6,c,0],[6,c,0],'#ffa94d',3);D([sol.x,c,0],9,'#ffd35c');L([sol.x,c,0],[sol.x,0,0],'#ffd35c88',1);TX([sol.x,c,0],'x = '+f(sol.x),'#ffd35c',15)}
+else{RB(x=>a*x*x+b*x+c,-6,6,'#4fc3ff');sol.r.forEach(x=>{D([x,0,0],9,'#ffd35c');TX([x,-.6,0],'x = '+f(x),'#ffd35c',15)})}},
+i:()=>sol?sol.html:''}];
+/* ---------- PROGRESS, QUIZ, TUTOR, GALAXY ---------- */
+const SK='mathverse.v1',LV=['Beginner','Intermediate','Advanced'],ld=()=>new Date().toLocaleDateString('en-CA'),fresh=()=>({mig:1,qz:{},xp:0,c:{},t:{},ex:{},streak:0,last:'',b:{},demo:0,daily:'',run:0});
+let PG=fresh(),Z=null,rn=Math.random;
+try{const sv=JSON.parse(localStorage.getItem(SK)||'null');if(sv){Object.assign(PG,sv);PG.qz=PG.qz||{};if(!sv.mig){for(const k in PG.c)if(PG.c[k]>=3)PG.ex[k]=1;PG.mig=1}}}catch(e){}
+const save=()=>{try{localStorage.setItem(SK,JSON.stringify(PG))}catch(e){}};
+(()=>{const d=ld();if(PG.last!=d){const y=new Date(Date.now()-864e5).toLocaleDateString('en-CA');PG.streak=PG.last==y?PG.streak+1:1;PG.last=d;save()}})();
+const lvl=()=>1+Math.floor(PG.xp/100),done=i=>!!((PG.qz[i]&&PG.qz[i].pass)||PG.ex[i]),mastered=()=>M.filter((_,i)=>done(i)).length;
+const BD={first:['🌱','First Step'],hot:['🔥','5 in a Row'],star:['⭐','100 XP'],ace:['🏆','Exam Ace 5/5'],exp:['🪐','3 Planets'],day:['📅','Daily Champ'],str:['⚡','3-Day Streak']};
+function toast(s){let t=$('toast');if(!t){t=document.createElement('div');t.id='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=s;t.style.display='block';clearTimeout(t.h);t.h=setTimeout(()=>t.style.display='none',3200)}
+function award(k){if(!PG.b[k]){PG.b[k]=1;toast(BD[k][0]+' Badge unlocked: '+BD[k][1])}}
+function hud(){$('xp').textContent=`Lv ${lvl()} · ${PG.xp} XP · 🔥${PG.streak}`;$('bar').style.width=PG.xp%100+'%';$('net').textContent=navigator.onLine?'● Online':'● Offline';if(view=='g'&&$('dash').innerHTML)dash()}
+function gain(n){PG.xp+=n;if(PG.xp>=100)award('star');if(PG.streak>=3)award('str');if(mastered()>=3)award('exp');save();hud()}
+const open_=(i,q)=>{const ok=PG.demo||i<3||done(i-1);if(!ok&&!q)toast('🔒 Master the previous planet first (score 4/5 on its Quiz or Exam)');return ok};
+function navr(){$('nav').innerHTML=M.map((o,i)=>`<button onclick="load(${i})" class="${view=='l'&&cur==i?'on':''}">${open_(i,1)?'':'🔒 '}${o.n}</button>`).join('')}
+function setV(){const g=view=='g';$('dash').style.display=g?'':'none';$('tabs').style.display=g?'none':'';if(g){$('exp').style.display=$('pq').style.display='none';dash()}navr()}
+function go(){view='g';setV()}
+function tab(t){tb=t;$('exp').style.display=t=='e'?'':'none';$('pq').style.display=t=='e'?'none':'';[...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.t==t));if(t=='p'){if(!Z||Z.i!=cur||(!Z.daily&&(Z.L!=+$('lv').value||Z.mode!=$('md').value)))startP();else show()}if(t=='t')tut();if(t=='z')qz()}
+$('lv').onchange=$('md').onchange=()=>{if(view=='l'&&tb=='p')startP()};
+window.addEventListener('online',hud);window.addEventListener('offline',hud);$('cls').addEventListener('change',()=>{if(view=='g')dash()});
+/*GN*/const rd=(a,b)=>a+Math.floor(rn()*(b-a+1)),pk=a=>a[rd(0,a.length-1)],sg=n=>n<0?'− '+(-n):'+ '+n,TR=()=>pk([[3,4,5],[5,12,13],[8,15,17]]);
+const GN=[[
+()=>{const x=rd(1,9),a=rd(2,5),b=rd(1,9);return[`Solve: ${a}x + ${b} = ${a*x+b}`,x,`Subtract ${b} from both sides: ${a}x = ${a*x}. Divide by ${a}: x = ${x}.`]},
+()=>{const x=rd(-5,8),a=rd(4,8),c=rd(1,3),b=rd(-9,9),d=(a-c)*x+b;return[`Solve: ${a}x ${sg(b)} = ${c}x ${sg(d)}`,x,`Collect x terms: (${a}−${c})x = ${d}−(${b}), so ${a-c}x = ${d-b} and x = ${x}.`]},
+()=>{const x=rd(-6,9),a=rd(2,6),b=rd(-8,8);return[`Solve: ${a}(x ${sg(b)}) = ${a*(x+b)}`,x,`Divide by ${a}: x ${sg(b)} = ${x+b}. So x = ${x}.`]}],[
+()=>{const a=rd(30,80),b=rd(30,70);return[`Two angles of a triangle are ${a}° and ${b}°. Find the third angle (degrees).`,180-a-b,`Angles of a triangle add to 180°: 180 − ${a} − ${b} = ${180-a-b}.`]},
+()=>{const t=rd(20,80);return[`The angle at the centre of a circle is ${2*t}°. Find the angle at the circumference on the same arc (degrees).`,t,`Centre angle = 2 × circumference angle, so ${2*t} ÷ 2 = ${t}.`]},
+()=>{const n=rd(5,12);return[`Find the sum of interior angles of a polygon with ${n} sides (degrees).`,(n-2)*180,`Sum = (n − 2) × 180° = ${n-2} × 180 = ${(n-2)*180}.`]}],[
+()=>{const h=2*rd(2,10);return[`In a right triangle the hypotenuse is ${h} and one angle is 30°. Find the side opposite that angle.`,h/2,`sin 30° = 1/2, so opposite = ${h} × 1/2 = ${h/2}.`]},
+()=>{const[a,b,c]=TR();return[`If sin θ = ${a}/${c} and θ is acute, find cos θ (3 decimals).`,b/c,`cos θ = √(1 − sin²θ) = √(1 − ${a*a}/${c*c}) = ${b}/${c}.`]},
+()=>{const[a,b,c]=TR();return[`If sin θ = ${a}/${c} and θ is acute, find tan θ (3 decimals).`,a/b,`cos θ = ${b}/${c}, so tan θ = sin θ ÷ cos θ = ${a}/${b}.`]}],[
+()=>{const a=rd(2,5),b=rd(-6,6),x=rd(-4,5);return[`For y = ${a}x ${sg(b)}, find y when x = ${x}.`,a*x+b,`y = ${a}(${x}) ${sg(b)} = ${a*x+b}.`]},
+()=>{const a=rd(1,4),p=rd(-4,4),b=-2*a*p;return[`Find the x-coordinate of the vertex of y = ${a}x² ${sg(b)}x + ${rd(1,5)}.`,p,`Vertex x = −b/(2a) = −(${b})/(2×${a}) = ${p}.`]},
+()=>{const a=rd(1,4),b=rd(-6,6),c=rd(-5,5);return[`Find the discriminant b² − 4ac of ${a}x² ${sg(b)}x ${sg(c)} = 0.`,b*b-4*a*c,`b² − 4ac = (${b})² − 4(${a})(${c}) = ${b*b-4*a*c}.`]}],[
+()=>{const a=rd(1,5),k=rd(1,6);return[`If f(x) = ${a}x², find f′(${k}).`,2*a*k,`f′(x) = ${2*a}x, so f′(${k}) = ${2*a*k}.`]},
+()=>{const a=rd(1,4),b=rd(-5,5),k=rd(1,4);return[`If f(x) = ${a}x³ ${sg(b)}x, find f′(${k}).`,3*a*k*k+b,`f′(x) = ${3*a}x² ${sg(b)}, so f′(${k}) = ${3*a*k*k+b}.`]},
+()=>{const a=rd(1,5);return[`Evaluate the integral of ${a}x² dx from x = 0 to x = 3.`,9*a,`∫${a}x² dx = ${a}x³/3. At x=3: ${a}·27/3 = ${9*a}. At x=0: 0.`]}],[
+()=>{const m=rd(1,4);return[`Find the magnitude of the vector (${3*m}, ${4*m}, 0).`,5*m,`|A| = √(${9*m*m} + ${16*m*m}) = √${25*m*m} = ${5*m}.`]},
+()=>{const A=[rd(-3,4),rd(-3,4),rd(-3,4)],B=[rd(-3,4),rd(-3,4),rd(-3,4)],d=A[0]*B[0]+A[1]*B[1]+A[2]*B[2];return[`Find A·B for A = (${A.join(', ')}) and B = (${B.join(', ')}).`,d,`Multiply matching components and add: ${A[0]*B[0]} + ${A[1]*B[1]} + ${A[2]*B[2]} = ${d}.`]},
+()=>{const a=rd(-3,4),b=rd(-3,4),c=rd(-3,4),d=rd(-3,4);return[`For A = (${a}, ${b}, 0) and B = (${c}, ${d}, 0), find the z-component of A×B.`,a*d-b*c,`z = a₁b₂ − a₂b₁ = (${a})(${d}) − (${b})(${c}) = ${a*d-b*c}.`]}],[
+()=>{const r=rd(2,8),b=rd(2,8);return[`A bag has ${r} red and ${b} blue balls. Find P(red) (3 decimals).`,r/(r+b),`P = favourable ÷ total = ${r}/${r+b}.`]},
+()=>{const s=rd(2,12),w=6-Math.abs(s-7);return[`Two dice are rolled. Find P(sum = ${s}) (3 decimals).`,w/36,`${w} ways out of 36 outcomes: P = ${w}/36.`]},
+()=>{const r=rd(3,6),b=rd(2,5),n=r+b;return[`A bag has ${r} red and ${b} blue balls. Two are drawn without replacement. Find P(both red) (3 decimals).`,r*(r-1)/(n*(n-1)),`P = ${r}/${n} × ${r-1}/${n-1} = ${r*(r-1)}/${n*(n-1)}.`]}],[
+()=>{const a=rd(-3,5),b=rd(-3,5),c=rd(-3,5),d=rd(-3,5);return[`Find the determinant of [ ${a} ${b} ; ${c} ${d} ].`,a*d-b*c,`det = ad − bc = (${a})(${d}) − (${b})(${c}) = ${a*d-b*c}.`]},
+()=>{const a=rd(-2,3),b=rd(-2,3),x=rd(-3,4),y=rd(-3,4);return[`The matrix [ ${a} ${b} ; c d ] acts on the point (${x}, ${y}). Find the new x-coordinate.`,a*x+b*y,`x′ = a·x + b·y = (${a})(${x}) + (${b})(${y}) = ${a*x+b*y}.`]},
+()=>{const a=rd(1,4),d=rd(1,4),A=rd(2,9);return[`A shape of area ${A} is transformed by [ ${a} 0 ; 0 ${d} ]. Find the new area.`,a*d*A,`det = ${a}×${d} = ${a*d}; new area = |det| × ${A} = ${a*d*A}.`]}],[
+()=>{const[a,b,c]=TR(),m=rd(1,3);return[`A ${c*m} m ladder has its foot ${a*m} m from a wall. How high up the wall does it reach (m)?`,b*m,`h² = ${c*m}² − ${a*m}² = ${(c*c-a*a)*m*m}, so h = ${b*m}.`]},
+()=>{const s1=10*rd(3,8),s2=10*rd(3,8),t=rd(2,5);return[`Two trains ${(s1+s2)*t} km apart move towards each other at ${s1} and ${s2} km/h. After how many hours do they meet?`,t,`The gap closes at ${s1}+${s2} = ${s1+s2} km/h, so time = ${(s1+s2)*t} ÷ ${s1+s2} = ${t}.`]},
+()=>{const big=rd(12,30),sm=rd(1,11);return[`The sum of two numbers is ${big+sm} and their difference is ${big-sm}. Find the larger number.`,big,`Add the equations: 2x = ${big+sm} + ${big-sm} = ${2*big}, so x = ${big}.`]}],[
+()=>{const x=rd(-5,9),a=rd(2,6),b=rd(-8,8);return[`Solve ${a}x ${sg(b)} = ${a*x+b}.`,x,`x = (${a*x+b} − (${b})) ÷ ${a} = ${x}.`]},
+()=>{const r1=rd(-4,3),r2=r1+rd(1,5);return[`Find the larger root of x² ${sg(-(r1+r2))}x ${sg(r1*r2)} = 0.`,r2,`Factorise: (x ${sg(-r1)})(x ${sg(-r2)}) = 0 (sum of roots ${r1+r2}, product ${r1*r2}). Larger root = ${r2}.`]},
+()=>{const a=rd(1,4),s=rd(-6,6);return[`Find the sum of the roots of ${a}x² ${sg(-a*s)}x + ${rd(1,5)} = 0.`,s,`Sum of roots = −b/a = −(${-a*s})/${a} = ${s}.`]}]];/*END*/
+const HS=[['Do the same operation to both sides: x = (c − b) ÷ a.','Changing only one side, or losing a minus sign.'],['Triangle angles sum to 180°; centre angle = 2 × circumference angle.','Using the circle theorem when P is on the minor arc.'],['sin = opp/hyp, cos = adj/hyp, tan = opp/adj; sin²θ + cos²θ = 1.','Mixing up opposite and adjacent sides.'],['Vertex x = −b/2a; discriminant D = b² − 4ac.','Dropping the sign of b in −b/2a.'],['d/dx xⁿ = n·xⁿ⁻¹; ∫xⁿ dx = xⁿ⁺¹/(n+1).','Forgetting to multiply by the power.'],['|A| = √(x²+y²+z²); A·B = a₁b₁+a₂b₂+a₃b₃; (A×B)z = a₁b₂ − a₂b₁.','Confusing dot (a number) with cross (a vector).'],['P = favourable ÷ total; without replacement the total shrinks.','Not reducing the total after a draw.'],['det = ad − bc; new area = |det| × old area.','Writing ad + bc.'],['Draw a diagram, name the unknown, write an equation, solve, check units.','Ignoring units.'],['Linear: x = (c − b) ÷ a. Quadratic: x = (−b ± √(b² − 4ac)) ÷ 2a.','Forgetting that ± gives two roots.']];
+/*QZ*/
+/* Topic quizzes: answers are matched by canonical VALUE ids (never by position, label or index). */
+const PASS=4,NQ=5;
+const nvv=s=>{s=String(s).replace(/[−–]/g,'-').replace(/[\s°]/g,'');const m=s.match(/^(-?\d+(?:\.\d+)?)(?:\/(-?\d+(?:\.\d+)?))?$/);if(!m)return null;const b=m[2]===undefined?1:+m[2];return b===0?null:+m[1]/b};
+const canon=s=>{const v=nvv(s);return v===null?'e'+String(s).replace(/[−–]/g,'-').replace(/\s+/g,'').toLowerCase():'n'+(+v.toFixed(9)+0)};
+const Q=(q,a,d,e,c)=>({q,a,d,e,c});
+const QB=[
+[Q('Solve: 3x + 7 = 22','5',['3','7','9'],'Subtract 7 from both sides: 3x = 15. Divide by 3: x = 5.',()=>(22-7)/3),
+Q('Solve: 2(x − 3) = 10','8',['2','5','16'],'Divide by 2: x − 3 = 5, so x = 8.',()=>10/2+3),
+Q('Expand and simplify: (x + 2)(x + 3)','x² + 5x + 6',['x² + 6x + 5','x² + 5x + 5','x² + 6'],'x² + 3x + 2x + 6 = x² + 5x + 6.',()=>'x²+'+(2+3)+'x+'+2*3),
+Q('Solve: 5x − 4 = 2x + 11','5',['3','5/3','−5'],'Subtract 2x and add 4: 3x = 15, so x = 5.',()=>(11+4)/(5-2)),
+Q('If x/4 + x/2 = 9, find x.','12',['6','9','18'],'x/4 + 2x/4 = 3x/4 = 9, so x = 9 × 4/3 = 12.',()=>9/(1/4+1/2))],
+[Q('Two angles of a triangle are 50° and 60°. Find the third angle (degrees).','70',['60','80','130'],'Angles of a triangle add to 180°: 180 − 50 − 60 = 70.',()=>180-50-60),
+Q('Find the sum of the interior angles of a hexagon (degrees).','720',['540','360','900'],'(n − 2) × 180 = 4 × 180 = 720.',()=>(6-2)*180),
+Q('A circle has radius 7 cm. Find its circumference using π = 22/7 (cm).','44',['22','14','154'],'C = 2πr = 2 × 22/7 × 7 = 44.',()=>2*22/7*7),
+Q('The angle at the centre of a circle is 100°. Find the angle at the circumference on the same (major) arc.','50',['200','100','25'],'Centre angle = 2 × circumference angle, so 100 ÷ 2 = 50.',()=>100/2),
+Q('Find each interior angle of a regular octagon (degrees).','135',['120','140','150'],'Sum = 6 × 180 = 1080; each angle = 1080 ÷ 8 = 135.',()=>(8-2)*180/8)],
+[Q('Find sin 30°.','1/2',['√3/2','1','0'],'sin 30° = 1/2 (the side opposite 30° is half the hypotenuse).',()=>Math.sin(Math.PI/6)),
+Q('Find tan 45°.','1',['0','√3','1/2'],'At 45° opposite = adjacent, so tan 45° = 1.',()=>Math.tan(Math.PI/4)),
+Q('If sin θ = 3/5 and θ is acute, find cos θ.','4/5',['3/4','5/4','5/3'],'cos θ = √(1 − 9/25) = √(16/25) = 4/5.',()=>Math.sqrt(1-9/25)),
+Q('A right triangle has legs 5 (opposite θ) and 12 (adjacent to θ). Find tan θ.','5/12',['12/5','5/13','12/13'],'tan θ = opposite ÷ adjacent = 5/12.',()=>5/12),
+Q('Find the value of sin²25° + cos²25°.','1',['0','2','1/2'],'sin²θ + cos²θ = 1 for every angle θ.',()=>Math.sin(25*Math.PI/180)**2+Math.cos(25*Math.PI/180)**2)],
+[Q('For y = 2x + 3, find y when x = 4.','11',['8','14','9'],'y = 2(4) + 3 = 11.',()=>2*4+3),
+Q('Find the slope of the line through (1, 2) and (3, 8).','3',['2','6','1/3'],'Slope = (8 − 2) ÷ (3 − 1) = 6 ÷ 2 = 3.',()=>(8-2)/(3-1)),
+Q('Find the y-intercept of y = −3x + 5.','5',['−3','3','5/3'],'Put x = 0: y = 5.',()=>-3*0+5),
+Q('Find the x-coordinate of the vertex of y = x² − 6x + 5.','3',['−3','6','5'],'Vertex x = −b/(2a) = 6/2 = 3.',()=>6/(2*1)),
+Q('Find the discriminant of x² − 4x + 5.','−4',['4','36','0'],'b² − 4ac = 16 − 20 = −4 (so there are no real roots).',()=>(-4)**2-4*1*5)],
+[Q('If f(x) = x², find f′(3).','6',['3','9','2'],'f′(x) = 2x, so f′(3) = 6.',()=>2*3),
+Q('Differentiate 5x³ with respect to x.','15x²',['5x²','15x³','15x'],'Multiply by the power and reduce the power by 1: 5 × 3 = 15, x²: 15x².',()=>5*3+'x²'),
+Q('If f(x) = 3x² + 4x − 7, find f′(2).','16',['12','20','8'],'f′(x) = 6x + 4, so f′(2) = 12 + 4 = 16.',()=>6*2+4),
+Q('Evaluate the integral of x dx from x = 0 to x = 2.','2',['4','1','1/2'],'∫x dx = x²/2. At 2: 4/2 = 2. At 0: 0. Answer 2.',()=>2**2/2),
+Q('Find the x-value at which f(x) = x² − 4x has its minimum.','2',['4','−2','0'],'f′(x) = 2x − 4 = 0, so x = 2.',()=>4/2)],
+[Q('Find the magnitude of the vector (6, 8).','10',['14','2','100'],'|A| = √(36 + 64) = √100 = 10.',()=>Math.hypot(6,8)),
+Q('Find A·B for A = (1, 2, 3) and B = (4, −5, 6).','12',['32','−12','15'],'4 + (−10) + 18 = 12.',()=>1*4+2*-5+3*6),
+Q('Find (2, 1) + (3, −4).','(5, −3)',['(5, 3)','(−1, 5)','(6, −4)'],'Add matching components: (2 + 3, 1 + (−4)) = (5, −3).',()=>'('+(2+3)+', '+(1-4)+')'),
+Q('Find k so that (2, k) is perpendicular to (3, 4).','−3/2',['3/2','8/3','−8/3'],'Perpendicular means dot product 0: 6 + 4k = 0, so k = −3/2.',()=>-6/4),
+Q('For A = (2, 3, 0) and B = (4, 5, 0), find the z-component of A × B.','−2',['2','22','−22'],'z = a₁b₂ − a₂b₁ = 2·5 − 3·4 = −2.',()=>2*5-3*4)],
+[Q('A fair coin is tossed. Find P(heads).','1/2',['1/3','1/4','1'],'1 favourable outcome out of 2: P = 1/2.',()=>1/2),
+Q('A fair die is rolled. Find P(number greater than 4).','1/3',['1/6','1/2','2/3'],'Favourable: 5 and 6, so P = 2/6 = 1/3.',()=>2/6),
+Q('Two fair dice are rolled. Find P(sum = 7).','1/6',['7/36','1/12','1/36'],'6 ways out of 36 outcomes: 6/36 = 1/6.',()=>6/36),
+Q('A bag has 3 red and 2 blue balls. Two are drawn without replacement. Find P(both red).','3/10',['9/25','3/5','6/25'],'3/5 × 2/4 = 6/20 = 3/10.',()=>3/5*2/4),
+Q('A fair coin is tossed 3 times. Find P(at least one head).','7/8',['1/8','3/8','1/2'],'1 − P(no heads) = 1 − 1/8 = 7/8.',()=>1-(1/2)**3)],
+[Q('Find the determinant of [ 2 3 ; 1 4 ].','5',['−5','11','8'],'det = ad − bc = 2·4 − 3·1 = 5.',()=>2*4-3*1),
+Q('Find the entry in row 1, column 1 of [ 1 2 ; 3 4 ] × [ 0 1 ; 1 0 ].','2',['0','1','4'],'Row 1 of the first matrix times column 1 of the second: 1×0 + 2×1 = 2.',()=>1*0+2*1),
+Q('Find the determinant of [ 3 6 ; 1 2 ].','0',['6','12','−6'],'3×2 − 6×1 = 0, so the matrix is singular.',()=>3*2-6*1),
+Q('The matrix [ 1 2 ; 0 3 ] acts on the point (2, 1). Find the new x-coordinate.','4',['3','5','7'],'x′ = 1×2 + 2×1 = 4.',()=>1*2+2*1),
+Q('A shape of area 5 is transformed by [ 3 0 ; 0 2 ]. Find the new area.','30',['11','15','6'],'det = 3×2 = 6, so new area = |det| × 5 = 30.',()=>(3*2-0)*5)],
+[Q('A 5 m ladder has its foot 3 m from a wall. How high up the wall does it reach (m)?','4',['2','8','16'],'h² = 5² − 3² = 16, so h = 4.',()=>Math.sqrt(25-9)),
+Q('The sum of two numbers is 30 and their difference is 8. Find the larger number.','19',['22','11','38'],'Add the equations: 2x = 38, so x = 19.',()=>(30+8)/2),
+Q('A train travels at 60 km/h for 2.5 hours. How far does it travel (km)?','150',['24','62.5','120'],'Distance = speed × time = 60 × 2.5 = 150.',()=>60*2.5),
+Q('A rectangle has perimeter 36 cm and its length is twice its width. Find the width (cm).','6',['12','9','3'],'2(2w + w) = 6w = 36, so w = 6.',()=>36/6),
+Q('Three-quarters of a number is 27. Find the number.','36',['81/4','40','24'],'27 ÷ 3/4 = 27 × 4/3 = 36.',()=>27/(3/4))],
+[Q('Solve x² − 5x + 6 = 0. Find the larger root.','3',['2','5','6'],'(x − 2)(x − 3) = 0, so the roots are 2 and 3; the larger is 3.',()=>Math.max(2,3)),
+Q('Find the sum of the roots of x² − 7x + 10 = 0.','7',['−7','10','3'],'Sum of roots = −b/a = 7 (the roots are 2 and 5).',()=>7/1),
+Q('Find the product of the roots of 2x² − 8x + 6 = 0.','3',['6','−3','4'],'Product of roots = c/a = 6/2 = 3.',()=>6/2),
+Q('Solve 3x² − 5x + 2 = 0. Find the smaller root.','2/3',['1','3/2','6/5'],'(3x − 2)(x − 1) = 0, so x = 2/3 or x = 1; the smaller is 2/3.',()=>(5-Math.sqrt(25-24))/6),
+Q('Solve x² − x − 12 = 0. Find the positive root.','4',['3','−4','12'],'(x − 4)(x + 3) = 0, so x = 4 or x = −3; the positive root is 4.',()=>(1+Math.sqrt(1+48))/2)]];
+function qzValidate(q){const e=[],ops=[q.a,...q.d],ids=ops.map(canon),key=canon(q.a);if(ops.length!=4)e.push('needs exactly 4 options');if(new Set(ids).size!=ids.length)e.push('duplicate or equivalent options');if(ids.filter(x=>x===key).length!=1)e.push('not exactly one correct option');let c='';try{c=canon(String(q.c()))}catch(x){}if(c!==key)e.push('independent solve disagrees with key');return e}
+function qzValidateTopic(i){const b=QB[i],e=[];if(!b||b.length!=NQ)return['topic must have exactly '+NQ+' questions'];if(new Set(b.map(q=>q.q)).size!=NQ)e.push('duplicate questions');b.forEach((q,k)=>qzValidate(q).forEach(m=>e.push('Q'+(k+1)+': '+m)));return e}
+function qzOpts(q,rnd=Math.random){const o=[q.a,...q.d].map(t=>({id:canon(t),t}));for(let i=o.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[o[i],o[j]]=[o[j],o[i]]}return o}
+const qzGrade=(id,key)=>id===key,qzPct=s=>Math.round(s/NQ*100),qzPassed=s=>s>=PASS;
+const qzApply=(r,s)=>{r=r||{att:0,best:0,pass:0};return{att:r.att+1,best:Math.max(r.best,s),pass:(r.pass||qzPassed(s))?1:0,last:s}};
+let QS=null;
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+function qz(){const i=cur,err=qzValidateTopic(i);if(err.length){$('pq').innerHTML=`<h3>📝 ${M[i].n.slice(2)} Quiz</h3><div class="card">⚠ Quiz unavailable: its answer key failed verification (${esc(err[0])}). Nothing was scored.</div>`;return}
+if(QS&&QS.i==i&&!QS.end)return qzShow();const r=PG.qz[i]||{att:0,best:0,pass:0};
+$('pq').innerHTML=`<h3>📝 ${M[i].n.slice(2)} Quiz</h3><div class="card">${NQ} questions · score ${PASS}/${NQ} (80%) or more to pass and unlock the next planet. Unlimited retries.<br>Attempts: ${r.att} · Best: ${r.best}/${NQ}${r.pass?' · ✅ Passed':''}</div><button onclick="qzStart()">${r.att?'Retry quiz':'Start quiz'}</button>`}
+function qzStart(){const i=cur;QS={i,n:0,sc:0,sel:null,end:0,rev:[]};QS.o=qzOpts(QB[i][0]);qzShow()}
+function qzShow(){const q=QB[QS.i][QS.n],key=canon(q.a),s=QS.sel,ok=s===key;
+$('pq').innerHTML=`<h3>${M[QS.i].n.slice(2)} Quiz · Question ${QS.n+1}/${NQ}</h3><div class="pb"><i style="width:${(QS.n+(s!=null?1:0))/NQ*100}%"></i></div><div class="card"><big>${q.q}</big></div><div class="opts">${QS.o.map(o=>`<button class="opt ${s!=null?(o.id===key?'ok':o.id===s?'no':''):''}" data-id="${esc(o.id)}" ${s!=null?'disabled':''} onclick="qzPick(this.dataset.id)">${o.t}</button>`).join('')}</div>${s!=null?`<div class="card" aria-live="polite">${ok?'<b style="color:#4ade80">✅ Correct Answer!</b><br>'+q.e:'<b style="color:#f87171">❌ Wrong Answer!</b><br>Correct answer: <b>'+q.a+'</b><br>Method: '+q.e}</div><button onclick="qzNext()">${QS.n+1>=NQ?'See result':'Next ▶'}</button>`:''}`}
+function qzPick(id){if(!QS||QS.end||QS.sel!=null)return;const q=QB[QS.i][QS.n];QS.sel=id;const ok=qzGrade(id,canon(q.a));if(ok)QS.sc++;QS.rev.push({q:q.q,ok,a:q.a});qzShow()}
+function qzNext(){if(!QS||QS.sel==null)return;QS.n++;if(QS.n>=NQ)return qzFinish();QS.sel=null;QS.o=qzOpts(QB[QS.i][QS.n]);qzShow()}
+function qzFinish(){const i=QS.i,sc=QS.sc,was=done(i),p=qzPassed(sc);QS.end=1;PG.qz[i]=qzApply(PG.qz[i],sc);if(p&&!was){gain(50);if(i<M.length-1)toast('🪐 Quiz passed! Next planet unlocked.')}save();navr();
+$('pq').innerHTML=`<h3>Quiz result: ${sc}/${NQ} · ${qzPct(sc)}%</h3><div class="card">${p?'<b style="color:#4ade80">🎉 Passed!</b> '+(i<M.length-1?'The next planet ('+M[i+1].n.slice(2)+') is unlocked.':'You have completed every topic!'):'<b style="color:#f87171">Not yet.</b> You need '+PASS+'/'+NQ+' (80%) to unlock the next planet. Review the explanations and try again — retries are unlimited.'}</div>${QS.rev.map((r,k)=>`<div class="card">${r.ok?'✅':'❌'} Q${k+1}: ${r.q}<br><small>Answer: ${r.a}</small></div>`).join('')}<button onclick="qzStart()">${p?'Practise again':'Retry quiz'}</button>`}
+/*QZEND*/
+function mk(L,gen){let r,k=0;do{r=gen()}while(!isFinite(r[1])&&k++<9);const a=f(r[1]),o=new Set([a]),u=Number.isInteger(a)?1:.05;const pr=/P\(|Find P/.test(r[0]);for(const d of[1,-1,2,-2,3,-3,5,10,4,-4,6,-6,8,-8])if(o.size<4){const v=f(a+d*u);if(!pr||(v>=0&&v<=1))o.add(v)}return{q:r[0],a,e:r[2],o:[...o].sort(()=>rn()-.5)}}
+function startP(){const x=$('md').value=='x';Z={i:cur,L:+$('lv').value,mode:$('md').value,n:0,sc:0,rev:[],tot:x?5:1e9,fb:!x};Z.qs=x?Array.from({length:5},()=>mk(Z.L,GN[cur][Z.L])):null;Z.q=Z.qs?Z.qs[0]:mk(Z.L,GN[cur][Z.L]);show()}
+function show(){const q=Z.q,ex=Z.daily?'Daily Challenge (2× XP)':Z.mode=='x'?'EXAM':'Practice';$('pq').innerHTML=`<h3>${M[Z.i].n.slice(2)} · ${LV[Z.L]} · ${ex}${Z.tot<1e9?` ${Z.n+1}/${Z.tot}`:''}</h3><div class="card"><big>${q.q}</big></div><div class="opts">${q.o.map((o,j)=>`<button class="opt ${Z.sel!=null&&Z.fb?(canon(String(o))===canon(String(q.a))?'ok':j==Z.sel?'no':''):''}" ${Z.sel!=null?'disabled':''} onclick="pk2(${j})">${o}</button>`).join('')}</div>${Z.sel!=null?`<div class="card" aria-live="polite">${Z.fb?(Z.ok?'<b style="color:#4ade80">✅ Correct Answer!</b> ':'<b style="color:#f87171">❌ Wrong Answer!</b> Correct answer: <b>'+q.a+'</b>. ')+'<br>'+q.e:'Answer saved. Feedback is shown at the end of the exam.'}</div><button onclick="nx()">${Z.n+1>=Z.tot?'Finish':'Next ▶'}</button>`:Z.fb?'<button onclick="$(\'hn\').textContent=HS[Z.i][0]">💡 Hint</button> <small id="hn"></small>':''}`}
+function pk2(j){if(Z.sel!=null)return;const q=Z.q,i=Z.i,was=done(i);Z.sel=j;Z.ok=canon(String(q.o[j]))===canon(String(q.a));PG.t[i]=(PG.t[i]||0)+1;award('first');if(Z.ok){Z.sc++;PG.c[i]=(PG.c[i]||0)+1;PG.run=(PG.run||0)+1;if(PG.run>=5)award('hot');if(Z.fb)gain(10*(Z.L+1)*(Z.daily?2:1))}else PG.run=0;Z.rev.push({q:q.q,ok:Z.ok,a:q.a,e:q.e});if(!was&&done(i))toast('🪐 Planet mastered! Next planet unlocked.');save();navr();show()}
+function nx(){Z.n++;if(Z.n>=Z.tot)return fin();Z.sel=null;Z.q=Z.qs?Z.qs[Z.n]:mk(Z.L,GN[Z.i][Z.L]);show()}
+function fin(){const x=Z.mode=='x'&&!Z.daily;let m='Great work — keep practising!';if(Z.daily){PG.daily=ld();award('day');gain(20);m='Daily challenge complete! +20 bonus XP'}else if(x){if(Z.sc>=4)PG.ex[Z.i]=1;if(Z.sc==5)award('ace');gain(Z.sc*10*(Z.L+1));m=Z.sc>=4?'Passed — planet mastered!':'You need 4/5 (80%) to pass. Review and retry.'}save();navr();$('pq').innerHTML=`<h3>Result: ${Z.sc}/${Z.tot}</h3><div class="card">${m}</div>${Z.rev.map(r=>`<div class="card">${r.ok?'✅':'❌'} ${r.q}<br><small>Answer ${r.a}. ${r.e}</small></div>`).join('')}<button onclick="startP()">Try again</button>`}
+function daily(){if(PG.daily==ld())return toast('Daily challenge already completed today ✅');const n=Math.floor(Date.now()/864e5),i=n%10,L=n%3;let a=(n*2654435761)>>>0;rn=()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};const qs=Array.from({length:3},()=>mk(L,GN[i][L]));rn=Math.random;load(i,1);Z={i,L,mode:'p',daily:1,n:0,sc:0,rev:[],qs,tot:3,fb:1,q:qs[0]};tab('p')}
+function tut(){$('pq').innerHTML=`<h3>Math Tutor</h3><div class="card"><b>🧠 Local tutor (offline, rule-based — not AI)</b><br>${HS[cur][0]}<br><small>⚠ Common mistake: ${HS[cur][1]}</small></div><div class="card"><label>Equation to solve step-by-step<input type="text" id="tq" placeholder="3x+5=20 or x^2-5x+6=0" style="width:100%"></label><button onclick="tutSolve()">Solve with steps</button></div><div class="card">🌐 <b>AI tutor</b>: needs internet plus an API key and a backend server. <b>Not connected in this build</b>; nothing here is simulated AI.<br><button disabled>Ask AI (unavailable)</button></div>`}
+function tutSolve(){const t=$('tq').value;load(9,1);$('q').value=t;act('s')}
+const STARS=Array.from({length:90},()=>{const a=Math.random()*6.28,b=Math.acos(2*Math.random()-1),r=9+Math.random()*5;return[r*Math.sin(b)*Math.cos(a),r*Math.cos(b),r*Math.sin(b)*Math.sin(a)]}),PH=[210,290,170,45,330,190,120,260,20,310];
+const GAL={k:-1,pos:[],pp(i,t){const a=t*(.25-i*.015)+i*.63,r=1.8+i*.52;return[r*Math.cos(a),0,r*Math.sin(a)]},
+d(){const t=performance.now()/1000,s=sc();X.fillStyle='#fff';X.globalAlpha=.6;STARS.forEach(q=>{const p=P(q);X.fillRect(p[0],p[1],1.6,1.6)});X.globalAlpha=1;
+for(let i=0;i<10;i++)PL(Array.from({length:65},(_,j)=>[(1.8+i*.52)*Math.cos(j*PI/32),0,(1.8+i*.52)*Math.sin(j*PI/32)]),'#7dd3fc26',1);
+D([0,0,0],s*.8,'#ffb347');TX([-.8,.9,0],'MATHVERSE','#ffd9a0',13);this.pos=M.map((_,i)=>({i,s:P(this.pp(i,t))}));
+[...this.pos].sort((a,b)=>a.s[2]-b.s[2]).forEach(o=>{const i=o.i,ok=open_(i,1),r=s*(i==this.k?.5:.38);D(this.pp(i,t),r,ok?`hsl(${PH[i]},80%,55%)`:'#556');X.fillStyle=ok?'#fff':'#9aa';X.font='12px sans-serif';X.fillText((ok?'':'🔒 ')+M[i].n.slice(2),o.s[0]+r+3,o.s[1]+4);const c=Math.min(3,PG.c[i]||0);if(c||PG.ex[i])X.fillText('★'.repeat(c)+(PG.ex[i]?'🏅':''),o.s[0]-12,o.s[1]-r-4)})},
+pick(x,y){this.k=-1;let b=sc()*.5;this.pos.forEach(o=>{const d=Math.hypot(o.s[0]-x,o.s[1]-y);if(d<b){b=d;this.k=o.i}});return this.k>=0},drag(){},open(){if(this.k>=0)load(this.k)},i:()=>''};
+function dash(){const cl=$('cls').value;$('dash').innerHTML=`<h2>🌌 MathVerse Galaxy</h2><small>Tap a planet to enter its lab. Drag to rotate the galaxy.</small><div class="card"><b>Level ${lvl()}</b> · ${PG.xp} XP<div class="pb"><i style="width:${PG.xp%100}%"></i></div><small>${100-PG.xp%100} XP to Level ${lvl()+1}</small></div><div class="g2"><div class="card">🔥 Streak<br><big>${PG.streak} day(s)</big></div><div class="card">🪐 Mastered<br><big>${mastered()}/10</big></div></div><button onclick="daily()">🎯 Daily challenge ${PG.daily==ld()?'✅ done':'(2× XP)'}</button><div class="card"><b>Class ${cl} learning path</b><br>${TP[cl].map(t=>`<button onclick="load(${t[1]})">${done(t[1])?'✅ ':open_(t[1],1)?'':'🔒 '}${t[0]}</button>`).join(' ')}</div><div class="card"><b>Topic mastery</b>${M.map((o,i)=>`<div><small>${o.n.slice(2)} · ${PG.t[i]||0} tried${PG.qz[i]?' · quiz best '+PG.qz[i].best+'/5':''}${PG.ex[i]?' · exam ✓':''}</small><div class="pb"><i style="width:${Math.round(((PG.qz[i]&&PG.qz[i].best)||0)/5*100)}%"></i></div></div>`).join('')}</div><div class="card"><b>Achievements</b><br>${Object.keys(BD).map(k=>`<span class="bd ${PG.b[k]?'on2':''}">${BD[k][0]}<small>${BD[k][1]}</small></span>`).join('')}</div><label><input type="checkbox" ${PG.demo?'checked':''} onchange="PG.demo=this.checked?1:0;save();navr();dash()"> Demo mode: unlock all planets</label><p><button onclick="if(confirm('Reset all progress?')){PG=fresh();save();hud();navr();dash()}">Reset progress</button></p><small>✅ Works offline: all 10 labs, quizzes, exams, solver, progress (saved on this device).<br>🌐 Needs internet + API: AI tutor (not connected in this build).</small>`}
+/* ---------- UI plumbing ---------- */
+function load(i,fr){if(!fr&&!open_(i))return;view='l';setV();tab('e');cur=i;v={...M[i].v};$('ctl').innerHTML=M[i].ui();last='';M[i].init&&M[i].init();[...$('nav').children].forEach((b,j)=>b.classList.toggle('on',j==i))}
+
+const TP={9:[['Linear equations',0],['Triangles',1],['Pythagoras',8],['Graph of a line',3],['Probability',6]],10:[['Quadratic equations',9],['Trigonometric ratios',2],['Circles',1],['Parabola',3],['Probability',6]],'1PU':[['Trig functions',2],['Derivatives',4],['3D vectors',5],['Functions',3],['Probability',6]],'2PU':[['Matrices',7],['Vectors',5],['Integrals',4],['Graphs',3],['Probability',6]]};
+const chips=()=>$('chips').innerHTML='Topics: '+TP[$('cls').value].map(t=>`<button onclick="load(${t[1]})">${t[0]}</button>`).join('');
+$('cls').onchange=chips;
+$('ctl').addEventListener('input',e=>{const t=e.target;if(!t.id)return;v[t.id]=t.type=='range'?+t.value:t.value;if($('o'+t.id))$('o'+t.id).textContent=t.value;m().ch&&m().ch(t.id)});
+$('ctl').addEventListener('keydown',e=>{if(e.key=='Enter')act('s')});
+const ps=new Map();
+C.onpointerdown=e=>{C.setPointerCapture(e.pointerId);ps.set(e.pointerId,[e.offsetX,e.offsetY]);drag=ps.size==1&&m().pick&&m().pick(e.offsetX,e.offsetY)};
+C.onpointermove=e=>{const o=ps.get(e.pointerId);if(!o)return;const n=[e.offsetX,e.offsetY];if(ps.size==2){const[p,q]=[...ps.values()],d0=R.hypot(p[0]-q[0],p[1]-q[1]);ps.set(e.pointerId,n);const[p2,q2]=[...ps.values()];cam.z=R.min(3,R.max(.4,cam.z*R.hypot(p2[0]-q2[0],p2[1]-q2[1])/d0))}else{ps.set(e.pointerId,n);if(drag)m().drag(n[0],n[1]);else{cam.y+=(n[0]-o[0])*.01;cam.p=R.max(-1.2,R.min(1.2,cam.p+(n[1]-o[1])*.01))}}};
+C.onpointerup=C.onpointercancel=e=>{const w=drag;ps.delete(e.pointerId);drag=0;if(w&&view=='g'&&e.type=='pointerup')GAL.open()};
+C.onwheel=e=>{e.preventDefault();cam.z=R.min(3,R.max(.4,cam.z*(e.deltaY<0?1.1:.9)))};
+let t0=0;function loop(t){const dt=R.min(.05,(t-t0)/1000)||0;t0=t;X.clearRect(0,0,W,H);m().d(dt);const s=m().i();if(s!==last){$('info').innerHTML=s;last=s}requestAnimationFrame(loop)}
+C.setAttribute('role','img');C.setAttribute('aria-label','Interactive 3D mathematics scene');rs();chips();hud();go();requestAnimationFrame(loop);
+</script></body></html>

@@ -1,0 +1,77 @@
+/* =====================================================
+   VISGEN PHYSICS LAB INTEGRATION
+   ===================================================== */
+
+:root {
+    --visgen-cyan: #22d3ee;
+    --visgen-purple: #a855f7;
+    --visgen-blue: #3b82f6;
+}
+
+/* VISGEN branding */
+header h1 {
+    letter-spacing: 2px;
+}
+
+/* Better scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #080c1c;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        var(--visgen-cyan),
+        var(--visgen-purple)
+    );
+    border-radius: 10px;
+}
+
+/* Physics module buttons */
+button {
+    transition: transform .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+/* VISGEN home button */
+#visgenHomeBtn {
+    background: linear-gradient(
+        135deg,
+        var(--visgen-cyan),
+        var(--visgen-purple)
+    );
+    color: white;
+    border: none;
+    font-weight: 600;
+}
+
+#visgenHomeBtn:hover {
+    box-shadow: 0 0 18px #22d3ee55;
+}
+
+/* Mobile */
+@media(max-width:800px) {
+
+    header {
+        padding: 8px;
+    }
+
+    header h1 {
+        width: 100%;
+        font-size: 15px;
+    }
+
+    main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 46vh 1fr;
+    }
+}

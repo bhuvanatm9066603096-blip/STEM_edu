@@ -1,0 +1,56 @@
+{
+    "subject": "Physics",
+    "slug": "physics",
+    "title": "VISGEN 3D Physics Lab",
+    "description": "Interactive 3D physics simulations for Classes 9 and 10.",
+    "icon": "⚛️",
+    "theme": {
+        "primary": "#22d3ee",
+        "secondary": "#a855f7"
+    },
+    "page": "subjects/physics/mathverse_physics.html",
+
+    "topics": [
+        {
+            "id": 1,
+            "name": "Projectile Motion",
+            "icon": "🚀"
+        },
+        {
+            "id": 2,
+            "name": "Pendulum",
+            "icon": "🔔"
+        },
+        {
+            "id": 3,
+            "name": "Electric Circuit",
+            "icon": "⚡"
+        },
+        {
+            "id": 4,
+            "name": "Newton's F = ma",
+            "icon": "🧱"
+        },
+        {
+            "id": 5,
+            "name": "Reflection of Light",
+            "icon": "🔦"
+        }
+    ],
+
+    "features": [
+        "Interactive 3D simulations",
+        "Virtual experiments",
+        "Step-by-step problem solving",
+        "Physics quizzes",
+        "XP and progress tracking",
+        "Offline functionality"
+    ],
+
+    "classes": [
+        "9",
+        "10",
+        "1PU",
+        "2PU"
+    ]
+}

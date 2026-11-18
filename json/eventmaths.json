@@ -1,0 +1,12 @@
+[
+  {
+    "kind": "quiz",
+    "key": "heart",
+    "ok": 1
+  },
+  {
+    "kind": "quiz",
+    "key": "lungs",
+    "ok": 0
+  }
+]

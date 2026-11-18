@@ -1,0 +1,173 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MATHVERSE 3D PHYSICS LAB</title>
+<style>
+*{box-sizing:border-box}:root{--c:#22d3ee;--p:#a855f7}
+body{margin:0;font:15px system-ui,sans-serif;color:#e8ecff;height:100vh;display:flex;flex-direction:column;background:radial-gradient(1200px 600px at 20% -10%,#1b1f5e66,transparent),#060b1f}
+header{display:flex;gap:10px;align-items:center;padding:8px 12px;flex-wrap:wrap;background:linear-gradient(90deg,#0b1030,#1a0f3a);border-bottom:1px solid #22d3ee55;box-shadow:0 0 24px #22d3ee22}
+h1{font-size:17px;margin:0;letter-spacing:2px;background:linear-gradient(90deg,var(--c),var(--p));-webkit-background-clip:text;background-clip:text;color:transparent}
+select,input[type=number],button{background:#111a3d;color:#fff;border:1px solid #3b82f666;border-radius:8px;padding:6px 10px;font:inherit;transition:.2s}
+button{cursor:pointer}button:hover,.on{background:linear-gradient(135deg,#3b82f6,#a855f7);box-shadow:0 0 14px #a855f777;border-color:transparent}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:6px 12px;background:#10162c}nav button{white-space:nowrap}
+#chips{padding:5px 12px;font-size:13px;display:flex;gap:6px;flex-wrap:wrap;background:#0e1328;align-items:center}#chips button{padding:2px 9px;font-size:13px;border-radius:14px}
+main{flex:1;display:grid;grid-template-columns:1fr 380px;min-height:0}
+#c{width:100%;height:100%;display:block;touch-action:none;background:radial-gradient(circle at 50% 30%,#1c2a5a,#080c1c)}
+aside{overflow:auto;padding:12px;background:linear-gradient(#0d1233,#0a0f26);border-left:1px solid #a855f733}
+label{display:block;margin:6px 0 0;font-size:13px}input[type=range]{width:100%;accent-color:var(--c)}input[type=number]{width:100%}
+#info,.card{background:#0e1538cc;border:1px solid #22d3ee33;border-radius:12px;box-shadow:0 0 18px #3b82f61a;animation:fi .4s}
+#info{margin-top:10px;line-height:1.45;font-size:14px;padding:4px 12px}#info p{margin:8px 0}.card{padding:10px 12px;margin:8px 0;line-height:1.45}
+h2,h3{margin:6px 0;color:var(--c)}@keyframes fi{from{opacity:0;transform:translateY(6px)}}
+.pill{font-size:12px;padding:3px 9px;border-radius:12px;background:#0e1538;border:1px solid #a855f755}
+#xb,.pb{height:6px;background:#1e2a5a;border-radius:4px;overflow:hidden;min-width:60px}#xb{width:90px}#bar,.pb i{display:block;height:100%;background:linear-gradient(90deg,var(--c),var(--p));transition:width .6s}
+#tabs{display:flex;gap:6px}#tabs button{flex:1;padding:6px 2px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.opt{font-size:17px;padding:12px}
+.opt.ok{background:#0f766e!important}.opt.no{background:#9f1239!important}.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:linear-gradient(135deg,#3b82f6,#a855f7);padding:10px 18px;border-radius:24px;z-index:9;display:none}
+@media(max-width:800px){main{grid-template-columns:1fr;grid-template-rows:46vh 1fr}.opts{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><h1>MATHVERSE · 3D PHYSICS LAB</h1><label style="margin:0">Class <select id="cls"><option>9</option><option>10</option><option>1PU</option><option>2PU</option></select></label><button onclick="location.href='/'">🏠 VISGEN Home</button><button onclick="go()">⚛ Physics Home</button><span id="xp" class="pill"></span><div id="xb"><i id="bar"></i></div><span id="net" class="pill"></span></header>
+<nav id="nav"></nav><div id="chips"></div>
+<main><canvas id="c"></canvas><aside><div id="dash"></div><div id="tabs"><button data-t="e" onclick="tab('e')">🔭 Explore</button><button data-t="l" onclick="tab('l')">🧪 Lab</button><button data-t="s" onclick="tab('s')">🧮 Solve</button><button data-t="q" onclick="tab('q')">🎯 Quiz</button></div><div id="exp"><div id="ctl"></div><div id="info"></div></div><div id="pq"></div></aside></main>
+<script>
+const $=id=>document.getElementById(id),R=Math,PI=R.PI,f=n=>isFinite(n)?+(+n).toFixed(2):'—',rad=d=>d*PI/180,h=(t,b)=>`<p><b>${t}:</b> ${b}</p>`,rd=(a,b)=>a+R.floor(R.random()*(b-a+1));
+const C=$('c'),X=C.getContext('2d');let W,H,cam={y:.45,p:.3,z:1},v={},cur=0,last='',view='g',Z={},ph=0,gk=-1,gp=[],sv={};
+function rs(){const r=C.getBoundingClientRect(),d=devicePixelRatio||1;C.width=r.width*d;C.height=r.height*d;X.setTransform(d,0,0,d,0,0);W=r.width;H=r.height}
+new ResizeObserver(rs).observe(C);
+/* ---- tiny 3D engine (offline, no libraries) ---- */
+const sc=()=>R.min(W,H)/12*cam.z;
+function P(q){const cy=R.cos(cam.y),sy=R.sin(cam.y),cp=R.cos(cam.p),sp=R.sin(cam.p),x1=q[0]*cy+q[2]*sy,z1=-q[0]*sy+q[2]*cy,s=sc();return[W/2+x1*s,H/2-(q[1]*cp-z1*sp)*s,q[1]*sp+z1*cp]}
+const L=(a,b,c='#fff',w=2)=>{a=P(a);b=P(b);X.strokeStyle=c;X.lineWidth=w;X.beginPath();X.moveTo(a[0],a[1]);X.lineTo(b[0],b[1]);X.stroke()};
+const PL=(pts,c,w=3)=>{X.strokeStyle=c;X.lineWidth=w;X.beginPath();pts.forEach((q,i)=>{q=P(q);i?X.lineTo(q[0],q[1]):X.moveTo(q[0],q[1])});X.stroke()};
+const F=(pts,fill,st)=>{X.beginPath();pts.forEach((q,i)=>{q=P(q);i?X.lineTo(q[0],q[1]):X.moveTo(q[0],q[1])});X.closePath();if(fill){X.fillStyle=fill;X.fill()}if(st){X.strokeStyle=st;X.lineWidth=1.5;X.stroke()}};
+const D=(p,r,c)=>{p=P(p);const g=X.createRadialGradient(p[0]-r/3,p[1]-r/3,r/6,p[0],p[1],r);g.addColorStop(0,'#fff');g.addColorStop(1,c);X.fillStyle=g;X.beginPath();X.arc(p[0],p[1],r,0,7);X.fill()};
+const TX=(p,s,c='#fff',n=14)=>{p=P(p);X.fillStyle=c;X.font=n+'px sans-serif';X.fillText(s,p[0]+5,p[1]-5)};
+const AR=(a,b,c,w=3)=>{L(a,b,c,w);const A=P(a),B=P(b),an=R.atan2(B[1]-A[1],B[0]-A[0]);X.fillStyle=c;X.beginPath();X.moveTo(B[0],B[1]);X.lineTo(B[0]-13*R.cos(an-.4),B[1]-13*R.sin(an-.4));X.lineTo(B[0]-13*R.cos(an+.4),B[1]-13*R.sin(an+.4));X.fill()};
+function CU(c,a,b,d,hu){const V=[];for(let i=0;i<8;i++)V.push([c[0]+(i&1?a:-a)/2,c[1]+(i&2?b:-b)/2,c[2]+(i&4?d:-d)/2]);
+[[0,1,3,2],[4,5,7,6],[0,1,5,4],[2,3,7,6],[0,2,6,4],[1,3,7,5]].map(q=>({q,z:q.reduce((t,i)=>t+P(V[i])[2],0)})).sort((p,q)=>p.z-q.z).forEach((o,i)=>F(o.q.map(i=>V[i]),`hsl(${hu},65%,${28+i*7}%)`,'#0006'))}
+const FL=y=>F([[-6,y,-2.5],[6,y,-2.5],[6,y,2.5],[-6,y,2.5]],'#1a2a6a88','#3b82f655');
+/* ---- UI helpers ---- */
+const S=(k,l,a,b,s=1)=>`<label>${l}: <b id="o${k}">${v[k]}</b><input type="range" id="${k}" min="${a}" max="${b}" step="${s}" value="${v[k]}"></label>`;
+const GI=()=>`<label>Gravity g (m/s²)<input type="number" id="g" min="1" max="30" step="0.1" value="${v.g}"></label>`;
+const Bt=(l,a)=>`<button onclick="act('${a}')">${l}</button> `;
+const Sel=(k,o)=>`<select id="${k}">${o.map(x=>`<option value="${x[0]}" ${v[k]==x[0]?'selected':''}>${x[1]}</option>`).join('')}</select>`;
+const G=()=>R.max(.5,+v.g||9.8),M0=a=>`<p>${Bt('▶ Start','go')+Bt('⏸ Pause','p')+Bt('↺ Reset','r')}</p>`;
+/* ---- progress (saved on this device) ---- */
+const SK='mathverse.physics.v1',fresh=()=>({xp:0,q:{},ex:{}});let PG=fresh();try{Object.assign(PG,JSON.parse(localStorage.getItem(SK)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem(SK,JSON.stringify(PG))}catch(e){}},lvl=()=>1+(PG.xp/100|0),pct=()=>(Object.keys(PG.ex).length+Object.values(PG.q).filter(x=>x>=3).length)*10;
+function toast(s){let t=$('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}t.textContent=s;t.style.display='block';clearTimeout(t.h);t.h=setTimeout(()=>t.style.display='none',3000)}
+function hud(){$('xp').textContent=`Lv ${lvl()} · ${PG.xp} XP · ${pct()}%`;$('bar').style.width=PG.xp%100+'%';$('net').textContent=navigator.onLine?'● Online':'● Offline (works!)';if(view=='g')dash()}
+const gain=n=>{PG.xp+=n;save();hud()};addEventListener('online',hud);addEventListener('offline',hud);
+/* ---- circuit loop path ---- */
+const LP=[[-4,2.2],[4,2.2],[4,-2.2],[-4,-2.2],[-4,2.2]],SG=[8,4.4,8,4.4];
+function onLoop(s){let d=s*24.8;for(let i=0;i<4;i++){if(d<=SG[i]||i==3){const t=d/SG[i];return[LP[i][0]+(LP[i+1][0]-LP[i][0])*t,LP[i][1]+(LP[i+1][1]-LP[i][1])*t,0]}d-=SG[i]}}
+/* ---- MODULES ---- */
+const M=[
+{n:'1 Projectile',v:{u:20,a:30,g:9.8,s:1,t:0,run:0},
+ui:()=>S('u','Initial velocity u (m/s)',5,40)+S('a','Launch angle θ (°)',5,85)+GI()+S('s','Animation speed (×)',.2,3,.1)+M0(),
+ch(k){if(k!='s'){v.t=0;v.run=0}},
+act(a){if(a=='go'){if(v.t>=this.c().T)v.t=0;v.run=1}if(a=='p')v.run=0;if(a=='r'){v.t=0;v.run=0}},
+c(){const g=G(),t=rad(v.a),s=R.sin(t);return{g,T:2*v.u*s/g,H:v.u*v.u*s*s/(2*g),Rg:v.u*v.u*R.sin(2*t)/g,vx:v.u*R.cos(t),vy0:v.u*s}},
+d(dt){const c=this.c();if(v.run){v.t+=dt*v.s;if(v.t>=c.T){v.t=c.T;v.run=0}}
+const k=R.min(9/c.Rg,5/c.H,3),O=[-5,-2.5],pos=t=>[O[0]+k*c.vx*t,O[1]+k*(c.vy0*t-c.g*t*t/2),0];
+FL(-2.5);L([-5,-2.5,0],[5,-2.5,0],'#fff6',2);CU([-5,-2.6,0],.8,.3,.8,260);
+PL(Array.from({length:61},(_,i)=>pos(c.T*i/60)),'#ffd35c',3);
+D(pos(c.T/2),5,'#fff');TX(pos(c.T/2),'H = '+f(c.H)+' m','#fff',12);TX(pos(c.T),'R = '+f(c.Rg)+' m','#fff',12);
+const p=pos(v.t),vy=c.vy0-c.g*v.t;D(p,10,'#ff9a3c');AR(p,[p[0]+.12*c.vx,p[1],0],'#ff8a8a');TX([p[0]+.12*c.vx,p[1],0],'vx','#ff8a8a',12);AR(p,[p[0],p[1]+.12*vy,0],'#8aff9e');TX([p[0],p[1]+.12*vy,0],'vy','#8aff9e',12)},
+i(){const c=this.c(),vy=c.vy0-c.g*v.t;return h('Time of flight T = 2u sinθ / g',f(c.T)+' s')+h('Max height H = u² sin²θ / 2g',f(c.H)+' m')+h('Range R = u² sin2θ / g',f(c.Rg)+' m')+h('At t = '+f(v.t)+' s',`horizontal vx = ${f(c.vx)} m/s (never changes), vertical vy = ${f(vy)} m/s`)+'<p>The ball goes up while gravity slows vy to 0 at the top, then it falls. The yellow line is the path (a parabola). No air resistance, g constant. Range is largest at 45°.</p><p><small><b>Example:</b> u=20 m/s, θ=30°, g=10. T = 2×20×0.5/10 = 2 s. H = 400×0.25/20 = 5 m. R = 400×sin60°/10 = 34.64 m.</small></p>'},
+lab:['Find how launch angle and speed change the range and height.','Virtual launcher, angle and speed sliders, on-screen ruler.','Keep u = 20 m/s, g = 9.8. Try θ = 15°, 30°, 45°, 60°, 75°. Press Start and write down H and R each time.','Range is biggest at 45°. Angles that add to 90° (30° and 60°) give the same range. Height grows with θ.','A ball is thrown at 30 m/s at 30°. Find R and H (g = 10).']},
+{n:'2 Pendulum',v:{L:1,g:9.8,a:30,run:1,t:0},
+ui:()=>S('L','Length L (m)',.2,3,.1)+GI()+S('a','Initial angle (°)',5,60)+M0(),
+ch(){v.t=0},act(a){if(a=='go')v.run=1;if(a=='p')v.run=0;if(a=='r'){v.t=0;v.run=0}},
+d(dt){const w=R.sqrt(G()/v.L),T=2*PI/w,a0=rad(v.a);if(v.run)v.t+=dt;const th=t=>a0*R.cos(w*t),pv=[-2.5,4,0],len=1.2+v.L*1.1,bob=[pv[0]+len*R.sin(th(v.t)),pv[1]-len*R.cos(th(v.t)),0];
+CU([pv[0],4.15,0],3,.3,1,220);L(pv,[pv[0],pv[1]-len,0],'#fff3',1);L(pv,bob,'#e5e7eb',2);D(bob,15,'#ff9a3c');D(pv,4,'#fff');
+const Wn=2*T,t0=R.max(0,v.t-Wn),gx=t=>1+(t-t0)/Wn*5,gy=t=>-1.8+1.3*th(t)/a0;
+L([1,-1.8,0],[6.3,-1.8,0],'#fff6',1);L([1,-3.2,0],[1,-.4,0],'#fff6',1);TX([1,-.3,0],'displacement','#fff',12);TX([5.2,-1.8,0],'time','#fff',12);
+if(v.t>0)PL(Array.from({length:81},(_,i)=>{const t=t0+(v.t-t0)*i/80;return[gx(t),gy(t),0]}),'#6bff8a',3);D([gx(v.t),gy(v.t),0],6,'#6bff8a')},
+i(){const g=G(),T=2*PI*R.sqrt(v.L/g);return h('Time period T = 2π√(L/g)',f(T)+' s')+h('Frequency f = 1/T',f(1/T)+' Hz')+h('Length L',v.L+' m')+h('Gravity g',f(g)+' m/s²')+h('Effect of length','If L becomes 4×, T becomes 2× (T = '+f(2*T)+' s). Longer string = slower swing.')+`<p>⚠ T = 2π√(L/g) is only an <b>approximation for small angles</b> (below about 15°). ${v.a>15?'Your angle is bigger, so a real pendulum would take slightly longer. ':''}The green graph shows displacement against time; it repeats every T seconds.</p>`},
+lab:['Find how the length of a pendulum changes its time period.','Thread, bob, support, stopwatch (the app shows T).','Set angle to 10°, g = 9.8. Try L = 0.25 m, 1 m, 2.25 m. Note T each time.','T² ÷ L stays almost constant (≈ 4.03 s²/m). If L is 4× bigger, T is 2× bigger. T does not depend on the mass.','Find T for L = 2.5 m on Earth (g = 9.8).']},
+{n:'3 Circuit',v:{V:6,R:10,lay:'s',sw:1,w:1},
+ui:()=>S('V','Battery voltage V (volts)',1,12)+S('R','Resistance R (Ω)',1,30)+Sel('lay',[['s','Series: one resistor + bulb'],['p','Two equal resistors in parallel + bulb']])+`<p>${Bt(v.sw?'🔘 Open switch':'🔘 Close switch','sw')+Bt(v.w?'✂ Cut wire':'🔌 Connect wire','w')}</p><p>Ready-made: ${Bt('Bright','b')+Bt('Dim','m')+Bt('Broken','x')}</p>`,
+act(a){if(a=='sw')v.sw=!v.sw;if(a=='w')v.w=!v.w;if(a=='b')Object.assign(v,{V:12,R:3,sw:1,w:1,lay:'s'});if(a=='m')Object.assign(v,{V:3,R:25,sw:1,w:1,lay:'s'});if(a=='x')Object.assign(v,{sw:1,w:0})},
+c(){const Rt=v.lay=='p'?v.R/2:v.R,ok=v.sw&&v.w,I=ok?v.V/Rt:0;return{Rt,ok,I,b:R.min(1,I/1.5)}},
+d(dt){const c=this.c(),w=(a,b)=>L([a[0],a[1],0],[b[0],b[1],0],'#9ab',3);
+if(v.w)w([-4,2.2],[-2.2,2.2]);else{D([-4,2.2,0],5,'#f87171');D([-2.2,2.2,0],5,'#f87171');TX([-3.8,2.6,0],'gap!','#f87171',12)}
+w([-2.2,2.2],[4,2.2]);w([4,2.2],[4,-2.2]);w([4,-2.2],[-4,-2.2]);w([-4,-2.2],[-4,2.2]);
+CU([-4,0,0],.9,1.4,.7,140);TX([-4.2,1.1,.4],'+','#fff',16);TX([-4.2,-1.1,.4],'−','#fff',16);TX([-5.2,0,0],v.V+' V','#8aff9e',13);
+CU([4,0,0],.8,1.6,.8,30);TX([4.5,0,0],'R','#ffb347',14);
+if(v.lay=='p'){CU([4,0,1.6],.8,1.6,.8,30);L([4,1,0],[4,1,1.6],'#9ab',2);L([4,-1,0],[4,-1,1.6],'#9ab',2)}
+const q=P([0,2.2,0]);X.fillStyle=`rgba(255,220,80,${.55*c.b})`;X.beginPath();X.arc(q[0],q[1],16+50*c.b,0,7);X.fill();D([0,2.2,0],13,c.ok?`hsl(48,100%,${35+35*c.b}%)`:'#445');TX([-.4,3,0],'Bulb','#fff',12);
+if(v.sw)L([-1,-2.2,0],[1,-2.2,0],'#4ade80',5);else L([-1,-2.2,0],[.7,-1.2,0],'#f87171',5);D([-1,-2.2,0],4,'#fff');D([1,-2.2,0],4,'#fff');TX([-.5,-3,0],'Switch '+(v.sw?'ON':'OFF'),'#fff',12);
+if(c.ok){ph=(ph+dt*(.08+c.I*.1))%1;for(let i=0;i<16;i++)D(onLoop((ph+i/16)%1),4,'#7fd1ff')}},
+i(){const c=this.c();return h('Battery voltage V',v.V+' V')+h('Total resistance R',f(c.Rt)+' Ω'+(v.lay=='p'?' (two equal resistors in parallel = R/2)':''))+h('Current I = V / R',c.ok?`${v.V} ÷ ${f(c.Rt)} = <b>${f(c.I)} A</b>`:'<b>0 A</b>')+(c.ok?h('Power P = V × I',f(v.V*c.I)+' W'):'<p>🚫 The circuit is '+(!v.sw?'open (switch is OFF)':'incomplete (wire is cut)')+'. No complete path, so no current flows and the bulb stays off.</p>')+'<p>Ohm\'s law: V = IR, so I = V / R. More voltage → more current. More resistance → less current. The bulb is treated as having negligible resistance.</p>'},
+lab:['Verify Ohm\'s law: V ∝ I when R is fixed.','Battery, switch, resistor, bulb, connecting wires.','Close the switch and connect the wire. Keep R = 10 Ω. Set V = 2, 4, 6, 8 V and write the current I each time. Then keep V = 6 V and change R.','V ÷ I is the same every time (= R). A V–I graph is a straight line through zero. Bigger R gives smaller I.','A 12 V battery is joined to 4 Ω. Find I.']},
+{n:'4 Newton F=ma',v:{F:20,m:5,run:0,x:0,vel:0},
+ui:()=>S('F','Applied force F (N)',0,60)+S('m','Mass m (kg)',1,20)+M0(),
+ch(){v.x=0;v.vel=0;v.run=0},act(a){if(a=='go')v.run=1;if(a=='p')v.run=0;if(a=='r'){v.x=0;v.vel=0;v.run=0}},
+d(dt){const a=v.F/v.m;if(v.run){v.vel+=a*dt;v.x+=v.vel*dt;if(v.x>10)v.x-=10}const bx=-5+v.x,sz=.6+v.m*.05;
+FL(-1.5);CU([bx,-1.5+sz/2,0],sz*1.4,sz,sz*1.4,210);TX([bx-.4,-1.5+sz+.3,0],v.m+' kg','#fff',13);
+if(v.F>0){AR([bx-.7*sz-v.F/60*3,-1.5+sz/2,0],[bx-.7*sz,-1.5+sz/2,0],'#ffd35c',4);TX([bx-v.F/60*3-.5,-1.2+sz/2,0],'F = '+v.F+' N','#ffd35c',13)}
+if(a>0)AR([bx,.6,0],[bx+R.min(3,a*.5),.6,0],'#8aff9e',3);TX([bx,.9,0],'a = '+f(a),'#8aff9e',13)},
+i(){const a=v.F/v.m;return h('Newton\'s 2nd law F = m a, so a = F / m',`${v.F} ÷ ${v.m} = <b>${f(a)} m/s²</b>`)+h('Speed v = a t (now)',f(v.vel)+' m/s')+h('Distance s',f(v.x)+' m')+'<p>Double the force → double the acceleration. Double the mass → half the acceleration. Press Start to push the block (no friction here).</p>'},
+lab:['Verify Newton\'s second law, F = ma.','Block (trolley), force pusher, ruler.','Keep m = 5 kg and use F = 10, 20, 30 N. Note a each time. Then keep F = 20 N and use m = 2, 5, 10 kg.','a doubles when F doubles (a ∝ F). a halves when m doubles (a ∝ 1/m). F ÷ a = m.','A 12 N force acts on 3 kg. Find a.']},
+{n:'5 Reflection',v:{i:40},
+ui:()=>S('i','Angle of incidence i (°)',0,85)+'<p>Move the slider and watch the reflected ray.</p>',
+d(){const s=R.sin(rad(v.i)),c=R.cos(rad(v.i)),O=[0,0,0],A=[-4*s,4*c,0],B=[4*s,4*c,0];
+CU([0,-.2,0],10,.4,3,200);L(O,[0,4.5,0],'#fff6',1);TX([.1,4.5,0],'normal','#fff',12);
+AR(A,O,'#ffd35c',3);AR(O,B,'#6bff8a',3);L(O,[4*s,-4*c,0],'#6bff8a55',1);L(A,[-4*s,-4*c,0],'#fff3',1);
+D(A,8,'#ffd35c');D([-4*s,-4*c,0],8,'#ffd35c55');TX([-4*s,-4*c,0],'virtual image','#fff9',12);
+PL(Array.from({length:21},(_,k)=>{const q=rad(v.i)*k/20;return[-1.3*R.sin(q),1.3*R.cos(q),0]}),'#ffd35c',2);PL(Array.from({length:21},(_,k)=>{const q=rad(v.i)*k/20;return[1.6*R.sin(q),1.6*R.cos(q),0]}),'#6bff8a',2);
+TX([-1.6*s-.5,1.5,0],'i = '+v.i+'°','#ffd35c',14);TX([1.8*s,1.8,0],'r = '+v.i+'°','#6bff8a',14)},
+i(){return h('Angle of incidence i',v.i+'°')+h('Angle of reflection r',v.i+'° (r = i)')+h('Between incident and reflected ray','2 × i = '+2*v.i+'°')+h('Between ray and mirror surface',(90-v.i)+'°')+'<p><b>Laws of reflection:</b> (1) angle of incidence = angle of reflection; (2) the incident ray, reflected ray and normal lie in the same plane. Angles are measured from the normal (the dashed line). The faint image behind the mirror is the virtual image.</p>'},
+lab:['Verify the laws of reflection of light.','Plane mirror, ray of light, protractor (virtual).','Set i = 20°, 40°, 60° and read r each time.','r = i every time. Image is as far behind the mirror as the object is in front.','A ray hits a mirror at i = 35°. Find the angle between incident and reflected rays.']}];
+/* ---- problem solver (structured templates, not free text) ---- */
+const SOL=[
+{in:[['u','Speed u (m/s)',20],['a','Angle θ (°)',30],['g','g (m/s²)',10]],fn:x=>{const s=R.sin(rad(x.a)),T=2*x.u*s/x.g,Hh=x.u*x.u*s*s/(2*x.g),Rg=x.u*x.u*R.sin(rad(2*x.a))/x.g;return[`u = ${x.u} m/s, θ = ${x.a}°, g = ${x.g} m/s². Find H and R.`,'H = u² sin²θ / 2g &nbsp; R = u² sin2θ / g &nbsp; T = 2u sinθ / g',`H = ${x.u}² × sin²(${x.a}°) / (2 × ${x.g}) ; R = ${x.u}² × sin(${2*x.a}°) / ${x.g}`,`<b>H = ${f(Hh)} m, R = ${f(Rg)} m</b> (T = ${f(T)} s)`,'The ball rises to H, lands R metres away, and spends T seconds in the air.']}},
+{in:[['L','Length L (m)',1],['g','g (m/s²)',9.8]],fn:x=>{const T=2*PI*R.sqrt(x.L/x.g);return[`L = ${x.L} m, g = ${x.g} m/s². Find T and f.`,'T = 2π√(L/g), f = 1/T',`T = 2π × √(${x.L} / ${x.g})`,`<b>T = ${f(T)} s, f = ${f(1/T)} Hz</b>`,'One full swing takes T seconds. Valid for small angles only.']}},
+{in:[['V','Voltage V (V)',6],['R','Resistance R (Ω)',10]],fn:x=>[`V = ${x.V} V, R = ${x.R} Ω. Find I.`,'I = V / R (Ohm\'s law)',`I = ${x.V} / ${x.R}`,`<b>I = ${f(x.V/x.R)} A</b> (power P = VI = ${f(x.V*x.V/x.R)} W)`,'Current is how fast charge flows. Higher R lets less current through.']},
+{in:[['F','Force F (N)',20],['m','Mass m (kg)',5]],fn:x=>[`F = ${x.F} N, m = ${x.m} kg. Find a.`,'F = m a → a = F / m',`a = ${x.F} / ${x.m}`,`<b>a = ${f(x.F/x.m)} m/s²</b>`,'Starting from rest, the speed rises by this many m/s every second.']},
+{in:[['i','Angle i (°)',40]],fn:x=>[`i = ${x.i}° (from the normal).`,'r = i; angle between rays = 2i',`r = ${x.i}° ; 2 × ${x.i}°`,`<b>r = ${x.i}°, angle between rays = ${2*x.i}°</b>`,'The mirror turns the ray so it leaves at the same angle it arrived.']}];
+/* ---- quiz templates: 2 per topic, 5 questions per quiz ---- */
+M[0].Q=[()=>{const u=rd(2,6)*10;return[`A ball is thrown at ${u} m/s at 30° (g = 10 m/s²). Maximum height (m)?`,u*u/80,`H = u² sin²θ / 2g = ${u}² × 0.25 / 20 = ${f(u*u/80)} m.`]},()=>{const u=rd(2,6)*10;return[`At 45° with u = ${u} m/s and g = 10 m/s², the range (m) is?`,u*u/10,`R = u² sin90° / g = ${u*u} / 10 = ${u*u/10} m.`]}];
+M[1].Q=[()=>{const l=rd(1,4);return[`Time period (s) of a pendulum with L = ${l} m (g = 9.8 m/s²)?`,2*PI*R.sqrt(l/9.8),`T = 2π√(L/g) = 2π√(${l}/9.8) = ${f(2*PI*R.sqrt(l/9.8))} s.`]},()=>{const t=rd(1,5);return[`A pendulum has T = ${t} s. Its frequency (Hz) is?`,1/t,`f = 1/T = 1/${t} = ${f(1/t)} Hz.`]}];
+M[2].Q=[()=>{const r=rd(2,10),V=rd(2,12);return[`A ${V} V battery is joined to a ${r} Ω resistor. Current (A)?`,V/r,`I = V/R = ${V}/${r} = ${f(V/r)} A.`]},()=>{const I=rd(2,4),V=rd(2,6)*I;return[`${V} V drives a current of ${I} A. Resistance (Ω)?`,V/I,`R = V/I = ${V}/${I} = ${V/I} Ω.`]}];
+M[3].Q=[()=>{const m=rd(2,10),a=rd(2,6);return[`A force of ${m*a} N acts on ${m} kg. Acceleration (m/s²)?`,a,`a = F/m = ${m*a}/${m} = ${a} m/s².`]},()=>{const m=rd(2,10),a=rd(2,6);return[`A ${m} kg object accelerates at ${a} m/s². Force (N)?`,m*a,`F = ma = ${m} × ${a} = ${m*a} N.`]}];
+M[4].Q=[()=>{const i=rd(2,8)*10;return[`A ray hits a plane mirror with i = ${i}°. Angle between incident and reflected rays (°)?`,2*i,`r = i, so the angle between them is 2i = ${2*i}°.`]},()=>{const i=rd(2,8)*10;return[`A ray hits a mirror at i = ${i}° to the normal. Angle between the ray and the mirror surface (°)?`,90-i,`Normal is 90° to the surface, so 90° − ${i}° = ${90-i}°.`]}];
+function mk(g){const r=g(),a=f(r[1]),o=new Set([a]);for(const k of[2,.5,1.5,.75,1.25,3,.25])if(o.size<4)o.add(f(a*k));return{q:r[0],a,e:r[2],o:[...o].sort(()=>R.random()-.5)}}
+function startQ(){Z={i:cur,n:0,sc:0,ck:0,pk:null,qs:[0,1,0,1,0].map(k=>mk(M[cur].Q[k]))};showQ()}
+function showQ(){const q=Z.qs[Z.n],ck=Z.ck;$('pq').innerHTML=`<h3>🎯 ${M[Z.i].n.slice(2)} quiz · ${Z.n+1}/5</h3><div class="card"><big>${q.q}</big></div><div class="opts">${q.o.map((o,j)=>`<button class="opt ${ck?(o==q.a?'ok':j==Z.pk?'no':''):j==Z.pk?'on':''}" ${ck?'disabled':''} onclick="Z.pk=${j};showQ()">${o}</button>`).join('')}</div>`+(ck?`<div class="card" aria-live="polite">${q.o[Z.pk]==q.a?'✅ Correct!':'❌ Incorrect. Answer: <b>'+q.a+'</b>.'}<br>${q.e}</div><button onclick="nxQ()">${Z.n>3?'Finish':'Next ▶'}</button>`:'<button onclick="chkQ()">Check answer</button>')}
+function chkQ(){if(Z.pk==null)return toast('Choose an answer first');Z.ck=1;if(Z.qs[Z.n].o[Z.pk]==Z.qs[Z.n].a)Z.sc++;showQ()}
+function nxQ(){Z.n++;Z.ck=0;Z.pk=null;if(Z.n<5)return showQ();PG.q[Z.i]=R.max(PG.q[Z.i]||0,Z.sc);gain(Z.sc*10);$('pq').innerHTML=`<h3>Score: ${Z.sc}/5</h3><div class="card">${Z.sc>=3?'🎉 Well done! Quiz passed.':'Keep practising — try the Lab and Solve tabs, then retake.'}<br>Best score saved on this device: <b>${PG.q[Z.i]}/5</b> · +${Z.sc*10} XP</div><button onclick="startQ()">🔁 Retake quiz</button>`}
+/* ---- lab sheet & solver tabs ---- */
+function lab(){const o=M[cur],l=o.lab;$('pq').innerHTML=`<h3>🧪 ${o.n.slice(2)} experiment</h3>`+['Aim','Materials required','Procedure (use the Explore tab)','Observation, result & explanation','Practice question'].map((t,i)=>`<div class="card"><b>${t}</b><br>${l[i]}</div>`).join('')+`<button onclick="done_()">${PG.ex[cur]?'✅ Experiment completed':'✔ Mark experiment done'}</button>`}
+function done_(){if(PG.ex[cur])return toast('Already completed ✅');PG.ex[cur]=1;gain(20);toast('Experiment completed! +20 XP');lab()}
+function solver(){const s=SOL[cur];$('pq').innerHTML=`<h3>🧮 Problem solver · ${M[cur].n.slice(2)}</h3><div class="card">${s.in.map(a=>`<label>${a[1]}<input type="number" step="any" id="s_${a[0]}" value="${(sv[cur]||{})[a[0]]??a[2]}"></label>`).join('')}<p><button onclick="solve()">Solve step by step</button></p></div><div id="so"></div>`}
+function solve(){const s=SOL[cur],x={};s.in.forEach(a=>x[a[0]]=+$('s_'+a[0]).value);if(Object.values(x).some(n=>!(n>0)))return toast('Enter positive numbers');sv[cur]=x;const r=s.fn(x);$('so').innerHTML=['1. Known values','2. Formula','3. Substitute','4. Answer','5. In simple words'].map((t,i)=>`<div class="card"><b>${t}</b><br>${r[i]}</div>`).join('')+'<button onclick="see()">▶ Show this in the 3D lab</button>'}
+function see(){load(cur);Object.assign(v,sv[cur]);v.t=0;v.x=0;v.vel=0;v.run=1;$('ctl').innerHTML=m().ui()}
+/* ---- Lab Home (orbiting topic planets) ---- */
+const STARS=Array.from({length:90},()=>{const a=R.random()*6.28,b=R.acos(2*R.random()-1),r=9+R.random()*5;return[r*R.sin(b)*R.cos(a),r*R.cos(b),r*R.sin(b)*R.sin(a)]}),PH=[30,200,50,120,280];
+const GAL={d(){const t=performance.now()/1000,s=sc();STARS.forEach(q=>{const p=P(q);X.fillStyle='#fff7';X.fillRect(p[0],p[1],1.6,1.6)});
+for(let i=0;i<5;i++)PL(Array.from({length:65},(_,j)=>[(2+i*.8)*R.cos(j*PI/32),0,(2+i*.8)*R.sin(j*PI/32)]),'#7dd3fc26',1);
+D([0,0,0],s*.7,'#ffb347');TX([-.8,.9,0],'MATHVERSE','#ffd9a0',13);
+gp=M.map((_,i)=>{const a=t*(.3-i*.03)+i*1.26,r=2+i*.8;return[r*R.cos(a),0,r*R.sin(a)]});
+gp.map((p,i)=>({i,p})).sort((a,b)=>P(a.p)[2]-P(b.p)[2]).forEach(o=>{const r=s*(o.i==gk?.5:.4),q=P(o.p);D(o.p,r,`hsl(${PH[o.i]},80%,55%)`);X.fillStyle='#fff';X.font='12px sans-serif';X.fillText(M[o.i].n.slice(2)+(PG.ex[o.i]?' ✅':''),q[0]+r+3,q[1]+4)})},
+pick(x,y){gk=-1;let b=sc()*.55;gp.forEach((p,i)=>{const q=P(p),d=R.hypot(q[0]-x,q[1]-y);if(d<b){b=d;gk=i}});return gk>=0}};
+const TP={9:[3,4,2],10:[2,0,3,4],'1PU':[0,1,3],'2PU':[0,1,2]};
+const chips=()=>{$('chips').innerHTML='Class topics: '+TP[$('cls').value].map(i=>`<button onclick="load(${i})">${M[i].n.slice(2)}</button>`).join('');if(view=='g')dash()};$('cls').onchange=chips;
+function dash(){$('dash').innerHTML=`<h2>⚛ Lab Home</h2><small>Tap a planet (or a button above) to enter its virtual lab. Drag to rotate.</small><div class="card"><b>Level ${lvl()}</b> · ${PG.xp} XP<div class="pb"><i style="width:${PG.xp%100}%"></i></div></div><div class="g2"><div class="card">📈 Progress<br><big>${pct()}%</big></div><div class="card">🧪 Experiments<br><big>${Object.keys(PG.ex).length}/5</big></div></div><div class="card"><b>Topics & quiz scores</b>${M.map((o,i)=>`<div><small>${o.n.slice(2)} · experiment ${PG.ex[i]?'✅':'—'} · quiz ${PG.q[i]!=null?PG.q[i]+'/5':'—'}</small><div class="pb"><i style="width:${(PG.q[i]||0)*20}%"></i></div></div>`).join('')}</div><p><button onclick="if(confirm('Reset all progress?')){PG=fresh();save();hud()}">Reset progress</button></p><small>✅ Works offline: everything is inside this one file. Progress is saved on this device.</small>`}
+/* ---- navigation ---- */
+const m=()=>view=='g'?GAL:M[cur];
+function act(a){M[cur].act(a);$('ctl').innerHTML=M[cur].ui()}
+function navr(){$('nav').innerHTML=M.map((o,i)=>`<button onclick="load(${i})" class="${view=='l'&&cur==i?'on':''}">${o.n}</button>`).join('')}
+function setV(){const g=view=='g';$('dash').style.display=g?'':'none';$('tabs').style.display=g?'none':'';if(g){$('exp').style.display=$('pq').style.display='none';dash()}navr()}
+function go(){view='g';setV()}
+function tab(t){$('exp').style.display=t=='e'?'':'none';$('pq').style.display=t=='e'?'none':'';[...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.t==t));if(t=='l')lab();if(t=='s')solver();if(t=='q')startQ()}
+function load(i){view='l';cur=i;v={...M[i].v};ph=0;last='';$('ctl').innerHTML=M[i].ui();setV();tab('e')}
+$('ctl').addEventListener('input',e=>{const t=e.target;if(!t.id)return;const x=t.tagName=='SELECT'?t.value:+t.value;if(x!==x)return;v[t.id]=x;if($('o'+t.id))$('o'+t.id).textContent=t.value;m().ch&&m().ch(t.id)});
+let dn=null,mv=0;
+C.onpointerdown=e=>{C.setPointerCapture(e.pointerId);dn=[e.offsetX,e.offsetY];mv=0};
+C.onpointermove=e=>{if(!dn)return;const dx=e.offsetX-dn[0],dy=e.offsetY-dn[1];mv+=R.abs(dx)+R.abs(dy);cam.y+=dx*.01;cam.p=R.max(-1.2,R.min(1.2,cam.p+dy*.01));dn=[e.offsetX,e.offsetY]};
+C.onpointerup=C.onpointercancel=e=>{if(dn&&mv<6&&view=='g'&&e.type=='pointerup'&&GAL.pick(e.offsetX,e.offsetY))load(gk);dn=null};
+C.onwheel=e=>{e.preventDefault();cam.z=R.min(3,R.max(.4,cam.z*(e.deltaY<0?1.1:.9)))};
+let t0=0;function loop(t){const dt=R.min(.05,(t-t0)/1000)||0;t0=t;X.clearRect(0,0,W,H);m().d(dt);if(view=='l'){const s=m().i();if(s!==last){$('info').innerHTML=s;last=s}}requestAnimationFrame(loop)}
+C.setAttribute('role','img');C.setAttribute('aria-label','Interactive 3D physics scene');rs();chips();hud();go();requestAnimationFrame(loop);
+</script></body></html>
